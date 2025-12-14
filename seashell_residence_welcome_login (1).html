@@ -1,0 +1,3188 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seashell Residence - Calendar</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000 100%);
+      color: #e5e7eb;
+    }
+
+    /* HEADER */
+    header {
+      padding: 24px 24px 20px;
+      text-align: center;
+      position: relative;
+      background: transparent;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 2px;
+      background: linear-gradient(90deg,#22d3ee,#38bdf8,#22c55e);
+      box-shadow: 0 0 12px rgba(45,212,191,0.8);
+      border-radius: 999px;
+      opacity: 0.9;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #e5f4ff;
+      text-shadow: 0 0 12px rgba(56,189,248,0.9);
+      cursor: pointer;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity: 0.5;
+      color: #cbd5f5;
+    }
+
+    main {
+      padding: 18px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ΚΑΡΤΕΣ */
+    .card {
+      background: linear-gradient(145deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8));
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow:
+        0 18px 45px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(148,163,184,0.08);
+      border: 1px solid rgba(148,163,184,0.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .card-header-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid rgba(148,163,184,0.3);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #e5f2ff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 500;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 6px 9px;
+      border-radius: 8px;
+      border: 1px solid rgba(148,163,184,0.4);
+      font-size: 13px;
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #22d3ee;
+      box-shadow: 0 0 0 1px rgba(34,211,238,0.6);
+      background: rgba(15,23,42,0.95);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px 12px;
+    }
+
+    .form-row-full {
+      grid-column: 1 / -1;
+    }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s, color 0.15s, border-color 0.15s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top,#22d3ee,#0ea5e9);
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(34,211,238,0.9);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 18px rgba(34,211,238,1);
+      background: radial-gradient(circle at top,#67e8f9,#22d3ee);
+    }
+
+    .btn-secondary {
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      border: 1px solid rgba(148,163,184,0.6);
+    }
+
+    .btn-secondary:hover {
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56,189,248,0.6);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(148,163,184,0.5);
+      color: #e5e7eb;
+    }
+
+    .btn-ghost:hover {
+      border-color: #22d3ee;
+      box-shadow: 0 0 10px rgba(34,211,238,0.7);
+      background: rgba(15,23,42,0.7);
+    }
+
+    .btn-small {
+      padding: 4px 12px;
+      font-size: 11px;
+    }
+
+    .notif-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .notif-hint {
+      flex: 1;
+      text-align: right;
+      color: #6b7280;
+    }
+
+    .arrivals-group {
+      margin-bottom: 6px;
+    }
+
+    .arrivals-group strong {
+      color: #e5f2ff;
+    }
+
+    .arrivals-group ul {
+      padding-left: 18px;
+      margin: 3px 0 0;
+    }
+
+    .arrivals-group li {
+      margin-bottom: 2px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-header-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-month-label {
+      font-weight: 600;
+      font-size: 15px;
+      color: #e5f2ff;
+    }
+
+    .calendar-controls {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .goto-input {
+      width: 145px;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+    }
+
+    .summary-bar {
+      font-size: 11px;
+      margin-bottom: 6px;
+      color: #9ca3af;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .summary-bar strong {
+      color: #e5f2ff;
+    }
+
+    .summary-bar .pill {
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(148,163,184,0.6);
+    }
+
+    .pill {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.8);
+    }
+
+    .timeline-wrapper {
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.35);
+      overflow: auto;
+      background: radial-gradient(circle at top left,#020617,#020617 60%,#000 100%);
+      max-height: 620px;
+      box-shadow: inset 0 0 20px rgba(15,23,42,0.9);
+    }
+
+    .timeline-grid {
+      position: relative;
+      display: grid;
+      grid-auto-rows: 40px;
+      font-size: 11px;
+      min-width: 900px;
+    }
+
+    .tg-cell {
+      border: 1px solid rgba(30,64,175,0.35);
+      padding: 2px 4px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      background: rgba(15,23,42,0.9);
+      color: #cbd5f5;
+    }
+
+    .tg-header {
+      background: linear-gradient(180deg,#020617,#020617 40%,#0b1120 100%);
+      font-weight: 600;
+      text-align: center;
+      color: #e5f2ff;
+    }
+
+    .tg-header-label {
+      text-align: left;
+    }
+
+    .tg-row-label {
+      background: linear-gradient(90deg,#020617,#020617 50%,#030712 100%);
+      font-weight: 500;
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    .tg-row-label:hover {
+      background: radial-gradient(circle at left,rgba(34,211,238,0.25),rgba(15,23,42,0.95));
+    }
+
+    .tg-row-label.selected-accommodation {
+      background: radial-gradient(circle at left,rgba(56,189,248,0.4),rgba(15,23,42,1));
+      box-shadow: inset 0 0 10px rgba(56,189,248,0.7);
+    }
+
+    .tg-day {
+      background: rgba(15,23,42,0.88);
+    }
+
+    .tg-weekend {
+      background: radial-gradient(circle at center,rgba(15,118,110,0.25),rgba(15,23,42,0.95));
+    }
+
+    .day-number {
+      font-size: 11px;
+      font-weight: 600;
+      display: block;
+    }
+
+    .day-week {
+      font-size: 10px;
+      color: #9ca3af;
+      display: block;
+    }
+
+    /* Μπάρες κρατήσεων */
+    .booking {
+      position: absolute;
+      height: 20px;
+      line-height: 20px;
+      padding: 0 12px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border-radius: 999px;
+      color: #0f172a;
+      background: #06b6d4;
+      cursor: grab;
+      z-index: 5;
+      box-shadow:
+        0 0 12px rgba(56,189,248,0.95),
+        0 0 2px rgba(15,23,42,0.9);
+      border: 1px solid rgba(15,23,42,0.6);
+      transition: box-shadow 0.15s, transform 0.1s;
+    }
+
+    .booking:hover {
+      box-shadow:
+        0 0 18px rgba(56,189,248,1),
+        0 0 4px rgba(15,23,42,1);
+    }
+
+    .booking:active {
+      cursor: grabbing;
+      transform: scale(0.99);
+    }
+
+    .booking-guest {
+      font-weight: 600;
+    }
+
+    .booking.selected {
+      box-shadow:
+        0 0 0 2px #facc15,
+        0 0 16px rgba(250,204,21,0.9);
+    }
+
+    .booking.overbooked {
+      background: #f97373;
+      color: #111827;
+      box-shadow:
+        0 0 14px rgba(248,113,113,0.95),
+        0 0 2px rgba(15,23,42,0.9);
+    }
+
+    /* Tick για Check-in / Check-out */
+    .booking-tick {
+      font-size: 12px;
+      margin-right: 2px;
+    }
+    .booking-tick-in {
+      color: #e0faff;
+      text-shadow: 0 0 8px rgba(56,189,248,1);
+    }
+    .booking-tick-out {
+      color: #9ca3af;
+      text-shadow: none;
+    }
+
+    /* Χρώματα ανά κατάλυμα */
+    .booking.acc-0 { background:#22c55e; box-shadow:0 0 12px rgba(34,197,94,0.9); }
+    .booking.acc-1 { background:#0ea5e9; box-shadow:0 0 12px rgba(14,165,233,0.9); }
+    .booking.acc-2 { background:#a855f7; box-shadow:0 0 12px rgba(168,85,247,0.9); }
+    .booking.acc-3 { background:#f97316; box-shadow:0 0 12px rgba(249,115,22,0.9); }
+    .booking.acc-4 { background:#6366f1; box-shadow:0 0 12px rgba(99,102,241,0.9); }
+    .booking.acc-5 { background:#14b8a6; box-shadow:0 0 12px rgba(20,184,166,0.9); }
+    .booking.acc-6 { background:#ec4899; box-shadow:0 0 12px rgba(236,72,153,0.9); }
+    .booking.acc-7 { background:#06b6d4; box-shadow:0 0 12px rgba(6,182,212,0.9); }
+
+    .legend {
+      margin-top: 8px;
+      font-size: 11px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: #cbd5f5;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(248,250,252,0.6);
+      box-shadow: 0 0 8px rgba(59,130,246,0.75);
+    }
+
+    .legend-color.acc-0 { background:#22c55e; }
+    .legend-color.acc-1 { background:#0ea5e9; }
+    .legend-color.acc-2 { background:#a855f7; }
+    .legend-color.acc-3 { background:#f97316; }
+    .legend-color.acc-4 { background:#6366f1; }
+    .legend-color.acc-5 { background:#14b8a6; }
+    .legend-color.acc-6 { background:#ec4899; }
+    .legend-color.acc-7 { background:#06b6d4; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top,rgba(15,23,42,0.95),rgba(15,23,42,0.94));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal {
+      background: radial-gradient(circle at top,#020617,#020617 60%,#030712 100%);
+      border-radius: 14px;
+      padding: 16px 18px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow:
+        0 24px 60px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(148,163,184,0.4);
+      color: #e5e7eb;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #e5f2ff;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      color: #9ca3af;
+      transition: color 0.15s, transform 0.1s;
+    }
+
+    .modal-close:hover {
+      color: #f97373;
+      transform: scale(1.05);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .context-menu {
+      position: fixed;
+      min-width: 180px;
+      background: radial-gradient(circle at top,#020617,#020617 60%,#030712 100%);
+      border-radius: 10px;
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(148,163,184,0.5);
+      padding: 4px;
+      z-index: 100;
+    }
+
+    .context-menu button {
+      width: 100%;
+      justify-content: flex-start;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      color: #e5e7eb;
+      padding: 6px 10px;
+      font-size: 12px;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .context-menu button:hover {
+      background: rgba(34,211,238,0.18);
+      color: #e0f2fe;
+    }
+
+    .context-menu-separator {
+      height: 1px;
+      margin: 4px 2px;
+      background: rgba(148,163,184,0.4);
+      border-radius: 999px;
+    }
+
+    /* Dashboard */
+    .dashboard-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .dash-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dash-box {
+      flex: 1 1 260px;
+      background: radial-gradient(circle at top left,rgba(15,23,42,0.9),rgba(15,23,42,0.95));
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: inset 0 0 10px rgba(15,23,42,0.9);
+      font-size: 12px;
+    }
+
+    .dash-box h3 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #e5f2ff;
+    }
+
+    .dash-metric {
+      display: flex;
+      justify-content: space-between;
+      margin: 2px 0;
+    }
+
+    .dash-metric strong {
+      color: #e5f2ff;
+    }
+
+    .booking-list-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .booking-list-table th,
+    .booking-list-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(31,41,55,0.8);
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .booking-list-table th {
+      color: #e5f2ff;
+    }
+
+    .booking-list-table tr:nth-child(odd) {
+      background: rgba(15,23,42,0.8);
+    }
+
+    .booking-list-table tr:nth-child(even) {
+      background: rgba(15,23,42,0.6);
+    }
+
+    .booking-list-table tr.latest-booking {
+      box-shadow: inset 0 0 0 1px rgba(34,211,238,0.7);
+    }
+
+    /* Cleaning timeline */
+    .clean-in {
+      background: rgba(34,197,94,0.35);
+    }
+    .clean-stay {
+      background: rgba(37,99,235,0.2);
+    }
+    .clean-linen {
+      background: rgba(168,85,247,0.25);
+    }
+    .clean-out {
+      background: rgba(249,115,22,0.25);
+    }
+
+    .clean-cell-label {
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .modal-wide {
+      max-width: 1000px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* NEON κουμπί Νέα Κράτηση */
+    .neon-new-booking-btn {
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      background: radial-gradient(circle at top, #0ea5e9, #0369a1);
+      color: #e0faff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        0 0 8px rgba(56,189,248,1),
+        0 0 18px rgba(34,211,238,0.8);
+      text-shadow: 0 0 6px rgba(15,23,42,0.9);
+      transition: 0.18s ease-in-out;
+    }
+
+    .neon-new-booking-btn:hover {
+      box-shadow:
+        0 0 14px rgba(125,211,252,1),
+        0 0 28px rgba(34,211,238,1);
+      transform: translateY(-1px) scale(1.03);
+      background: radial-gradient(circle at top, #67e8f9, #0ea5e9);
+      color: #ffffff;
+    }
+
+    .neon-new-booking-btn:active {
+      transform: scale(0.97);
+      box-shadow:
+        0 0 6px rgba(56,189,248,0.8),
+        0 0 14px rgba(34,211,238,0.8);
+    }
+
+    /* NEON Ροζ & Γαλάζιο κουμπί αποθήκευσης */
+    .btn-neon-save {
+      background: linear-gradient(130deg, #ec4899, #a855f7, #22d3ee);
+      color: #0f172a;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      box-shadow:
+        0 0 12px rgba(236,72,153,0.9),
+        0 0 18px rgba(56,189,248,0.9);
+      text-shadow: 0 0 4px rgba(248,250,252,0.9);
+    }
+
+    .btn-neon-save:hover {
+      box-shadow:
+        0 0 16px rgba(236,72,153,1),
+        0 0 26px rgba(56,189,248,1);
+      transform: translateY(-1px) scale(1.03);
+    }
+
+    .btn-neon-save:active {
+      transform: scale(0.97);
+      box-shadow:
+        0 0 10px rgba(236,72,153,0.9),
+        0 0 18px rgba(56,189,248,0.9);
+    }
+
+    /* Συννεφάκι αφίξεων κάτω δεξιά */
+    .arrival-bubble-wrapper {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 60;
+    }
+
+    .arrival-bubble {
+      min-width: 260px;
+      max-width: 340px;
+      background: radial-gradient(circle at top, rgba(56,189,248,0.35), rgba(15,23,42,0.98));
+      border-radius: 18px;
+      padding: 10px 14px 8px;
+      border: 1px solid rgba(56,189,248,0.95);
+      box-shadow:
+        0 0 18px rgba(56,189,248,0.95),
+        0 18px 40px rgba(0,0,0,0.9);
+      font-size: 12px;
+      color: #e0faff;
+    }
+
+    .arrival-bubble h4 {
+      margin: 0 0 4px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e0f2fe;
+    }
+
+    .arrival-bubble-content {
+      max-height: 180px;
+      overflow: auto;
+      font-size: 11px;
+    }
+
+    .arrival-bubble-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .arrival-bubble-ok {
+      padding: 4px 14px;
+      font-size: 11px;
+    }
+  
+
+    /* === Welcome overlay hi‑tech screen === */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .welcome-overlay.hidden {
+      display: none;
+    }
+
+    .welcome-inner {
+      position: relative;
+      padding: 40px 48px;
+      border-radius: 24px;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.9),
+        0 0 0 1px rgba(56,189,248,0.5);
+      overflow: hidden;
+    }
+
+    .welcome-glow {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,0.18), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(236,72,153,0.16), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .welcome-content {
+      position: relative;
+      text-align: center;
+      min-width: 260px;
+    }
+
+    .welcome-title {
+      font-size: 42px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #e5f4ff;
+      text-shadow: 0 0 18px rgba(56,189,248,1);
+      margin-bottom: 10px;
+    }
+
+    .welcome-subtitle {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #9ca3af;
+      margin-bottom: 22px;
+    }
+
+    .welcome-btn {
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      padding: 10px 32px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #0ea5e9, #22d3ee, #a855f7);
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow:
+        0 0 18px rgba(56,189,248,1),
+        0 0 32px rgba(24,24,27,1);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .welcome-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(248,250,252,0.6) 50%,
+        transparent 100%
+      );
+      transform: translateX(-130%);
+    }
+
+    .welcome-btn:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow:
+        0 0 22px rgba(56,189,248,1),
+        0 0 44px rgba(24,24,27,1);
+    }
+
+    .welcome-btn:hover::before {
+      transition: transform 0.7s ease-out;
+      transform: translateX(130%);
+    }
+
+    .welcome-overlay.entering .welcome-inner {
+      animation: welcomeZoomIn 1.2s cubic-bezier(.16,.84,.44,1);
+    }
+
+    .welcome-overlay.exiting {
+      pointer-events: none;
+    }
+
+    .welcome-overlay.exiting .welcome-inner {
+      animation: welcomeExit 0.85s cubic-bezier(.22,.61,.36,1);
+    }
+
+    @keyframes welcomeZoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes welcomeExit {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: none;
+        clip-path: inset(0% 0% 0% 0%);
+      }
+      30% {
+        transform: scale(1.03);
+        filter: brightness(1.08);
+      }
+      55% {
+        clip-path: polygon(0 0, 100% 0, 100% 32%, 0 40%);
+        filter: contrast(1.3) brightness(1.18);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.12) translateY(-14px);
+        filter: blur(4px) brightness(0.6);
+        clip-path: inset(0% 0% 100% 0%);
+      }
+    }
+
+
+/* === Neon Login styles === */
+.login-card {
+  margin-bottom: 18px;
+  text-align: center;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top, rgba(2,6,23,0.9), rgba(2,6,23,0.8));
+  border: 1px solid rgba(56,189,248,0.5);
+  box-shadow:
+    0 0 22px rgba(56,189,248,0.6),
+    inset 0 0 24px rgba(56,189,248,0.15);
+}
+.login-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e0f2fe;
+}
+.login-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.neon-input {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(15,23,42,0.92);
+  color: #e5e7eb;
+  outline: none;
+  min-width: 220px;
+  font-size: 12px;
+  transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+}
+.neon-input:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 12px rgba(34,211,238,0.8);
+}
+.login-actions {
+  display: flex;
+  justify-content: center;
+}
+.login-error {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #fca5a5;
+  opacity: 0.9;
+}
+.shake {
+  animation: shakeX 0.45s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes shakeX {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <!-- Welcome Screen Overlay -->
+  <div id="welcomeOverlay" class="welcome-overlay entering">
+    <div class="welcome-inner">
+      <div class="welcome-glow"></div>
+      <div class="welcome-content">
+
+      <!-- Neon Login Form -->
+      <div id="loginCard" class="login-card">
+        <h4 class="login-title">Σύνδεση</h4>
+        <form id="loginForm" autocomplete="off">
+          <div class="login-row">
+            <input type="text" id="username" class="neon-input" placeholder="Όνομα χρήστη" required>
+          </div>
+          <div class="login-row">
+            <input type="password" id="password" class="neon-input" placeholder="Κωδικός πρόσβασης" required>
+          </div>
+          <div class="login-actions">
+            <button type="submit" class="welcome-btn" style="font-size:10px;">Σύνδεση</button>
+          </div>
+          <div id="loginError" class="login-error hidden">Λάθος στοιχεία. Προσπάθησε ξανά.</div>
+        </form>
+      </div>
+
+        <div id="welcomeBlock" class="hidden">
+        <div class="welcome-title">WELCOME</div>
+        <div class="welcome-subtitle">Seashell Residence · Calendar Control</div>
+        <button type="button" id="welcomeEnterBtn" class="welcome-btn">
+          ENTER CALENDAR
+        </button>
+        <div class="welcome-credit" style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.12em;">created by james rigas</div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <h1 id="mainTitle" title="Διπλό κλικ για αλλαγή τίτλου">Seashell Residence</h1>
+    <p>Created by James Rigas</p>
+  </header>
+
+  <main>
+    <div class="layout">
+      <!-- ΔΕΝ υπάρχει πλέον φόρμα πάνω από το Calendar -->
+
+      <!-- Ημερολόγιο timeline -->
+      <section class="card">
+        <div class="card-header-line">
+          <h2>Calendar / Timeline</h2>
+          <button
+            type="button"
+            id="newBookingBtn"
+            class="neon-new-booking-btn btn-small"
+          >
+            Νέα Κράτηση
+          </button>
+          <button type="button" id="saveChangesBtn" class="btn-ghost btn-small">
+            Αποθήκευση
+          </button>
+        </div>
+
+        <div class="calendar-header">
+          <div class="calendar-header-main">
+            <div class="calendar-controls">
+              <button type="button" id="prevDayBtn" class="btn-ghost btn-small">Προηγούμενη μέρα</button>
+              <button type="button" id="todayBtn" class="btn-ghost btn-small">Σήμερα</button>
+              <button type="button" id="nextDayBtn" class="btn-ghost btn-small">Επόμενη μέρα</button>
+            </div>
+            <div id="currentMonthLabel" class="calendar-month-label"></div>
+          </div>
+
+          <div class="calendar-controls">
+            <input type="date" id="gotoDateInput" class="goto-input" />
+            <button type="button" id="gotoDateBtn" class="btn-ghost btn-small">Μετάβαση</button>
+          </div>
+        </div>
+
+        <div id="summaryBar" class="summary-bar"></div>
+
+        <div class="timeline-wrapper">
+          <div id="timelineGrid" class="timeline-grid"></div>
+        </div>
+
+        <div class="legend" id="accommodationLegend"></div>
+        <div class="calendar-controls" style="margin-top:6px;">
+          <button type="button" id="addAccommodationBtnBottom" class="btn-ghost btn-small">
+            + Προσθήκη καταλύματος
+          </button>
+          <button type="button" id="removeAccommodationBtn" class="btn-secondary btn-small">
+            Διαγραφή καταλύματος
+          </button>
+        </div>
+      </section>
+
+      <!-- Dashboard -->
+      <section class="card">
+        <div class="card-header-line">
+          <h2>Dashboard</h2>
+          <div class="calendar-controls">
+            <button type="button" id="exportExcelBtn" class="btn-secondary btn-small">
+              Λήψη αναφοράς (Excel)
+            </button>
+            <button type="button" id="importExcelBtn" class="btn-secondary btn-small">
+              Συγχρονισμός από Excel
+            </button>
+            <button type="button" id="cleaningProgramBtn" class="btn-primary btn-small">
+              Πρόγραμμα καθαριότητας
+            </button>
+          </div>
+        </div>
+
+        <input
+          type="file"
+          id="excelFileInput"
+          accept=".xlsx,.xls"
+          style="display:none"
+        />
+
+        <div class="dashboard-grid">
+          <div class="dash-row">
+            <div class="dash-box">
+              <h3>Σημερινή εικόνα</h3>
+              <div id="todayStats"></div>
+            </div>
+            <div class="dash-box">
+              <h3>Αφίξεις / Αναχωρήσεις Σήμερα &amp; Αύριο</h3>
+              <div id="todayTomorrowStats"></div>
+            </div>
+          </div>
+
+          <div class="dash-box">
+            <h3>Όλες οι κρατήσεις (τελευταία καταχώρηση επάνω)</h3>
+            <div style="max-height:260px; overflow:auto;">
+              <table class="booking-list-table" id="bookingListTable"></table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal ΝΕΑΣ ΚΡΑΤΗΣΗΣ (pop-up) -->
+  <div id="newBookingModalBackdrop" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Νέα Κράτηση</h3>
+        <button type="button" id="newBookingModalClose" class="modal-close">&times;</button>
+      </div>
+
+      <div class="notif-bar">
+        <button type="button" id="enableNotificationsBtn" class="btn-ghost btn-small">
+          Ενεργοποίηση ειδοποιήσεων
+        </button>
+        <span class="notif-hint">Οι ειδοποιήσεις λειτουργούν όταν η σελίδα είναι ανοιχτή και ο browser τις επιτρέπει.</span>
+      </div>
+
+      <form id="bookingForm">
+        <div class="form-grid">
+          <div>
+            <label for="guestName">Όνομα επισκέπτη</label>
+            <input type="text" id="guestName" required />
+          </div>
+
+          <div>
+            <label for="accommodation">Κατάλυμα</label>
+            <select id="accommodation" required></select>
+          </div>
+
+          <div>
+            <label for="phone">Τηλέφωνο επισκέπτη</label>
+            <input type="tel" id="phone" />
+          </div>
+
+          <div>
+            <label for="email">Email επισκέπτη</label>
+            <input type="email" id="email" />
+          </div>
+
+          <div>
+            <label for="checkIn">Check-in</label>
+            <input type="date" id="checkIn" required />
+          </div>
+
+          <div>
+            <label for="checkOut">Check-out</label>
+            <input type="date" id="checkOut" required />
+          </div>
+
+          <div>
+            <label for="guests">Άτομα</label>
+            <input type="number" id="guests" min="1" max="4" value="2" />
+          </div>
+
+          <div class="form-row-full">
+            <label for="notes">Σημειώσεις</label>
+            <textarea id="notes" placeholder="Ώρα άφιξης, σχόλια κ.λπ."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-neon-save btn-small">Αποθήκευση</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal επεξεργασίας κράτησης -->
+  <div id="editModalBackdrop" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Επεξεργασία κράτησης</h3>
+        <button type="button" id="editModalClose" class="modal-close">&times;</button>
+      </div>
+      <form id="editBookingForm">
+        <div class="form-grid">
+          <div>
+            <label for="editGuestName">Όνομα επισκέπτη</label>
+            <input type="text" id="editGuestName" required />
+          </div>
+          <div>
+            <label for="editAccommodation">Κατάλυμα</label>
+            <select id="editAccommodation" required></select>
+          </div>
+          <div>
+            <label for="editPhone">Τηλέφωνο</label>
+            <input type="tel" id="editPhone" />
+          </div>
+          <div>
+            <label for="editEmail">Email</label>
+            <input type="email" id="editEmail" />
+          </div>
+          <div>
+            <label for="editCheckIn">Check-in</label>
+            <input type="date" id="editCheckIn" required />
+          </div>
+          <div>
+            <label for="editCheckOut">Check-out</label>
+            <input type="date" id="editCheckOut" required />
+          </div>
+          <div>
+            <label for="editGuests">Άτομα</label>
+            <input type="number" id="editGuests" min="1" max="4" />
+          </div>
+          <div class="form-row-full">
+            <label for="editNotes">Σημειώσεις</label>
+            <textarea id="editNotes"></textarea>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="editCancelBtn" class="btn-secondary btn-small">Άκυρο</button>
+          <button type="submit" class="btn-primary btn-small">Αποθήκευση αλλαγών</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal προγράμματος καθαριότητας -->
+  <div id="cleaningModalBackdrop" class="modal-backdrop hidden">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h3>Πρόγραμμα καθαριότητας</h3>
+        <button type="button" id="cleaningModalClose" class="modal-close">&times;</button>
+      </div>
+
+      <div class="calendar-controls" style="margin-bottom:6px;">
+        <input type="date" id="cleaningStartInput" class="goto-input" />
+        <input type="number" id="cleaningDaysInput" class="goto-input" min="1" max="60" value="7" style="width:80px;" />
+        <button type="button" id="cleaningApplyBtn" class="btn-ghost btn-small">Εφαρμογή</button>
+      </div>
+
+      <div id="cleaningRangeLabel" style="font-size:12px; margin-bottom:6px;"></div>
+      <div class="timeline-wrapper" style="max-height:420px;">
+        <div id="cleaningTimelineGrid" class="timeline-grid"></div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Context menu δεξιού κλικ -->
+  <div id="bookingContextMenu" class="context-menu hidden">
+    <button type="button" data-action="checkin">✔ Check in</button>
+    <button type="button" data-action="checkout">✔ Check out</button>
+
+    <!-- ΝΕΕΣ ΕΠΙΛΟΓΕΣ ΑΝΑΙΡΕΣΗΣ -->
+    <button type="button" data-action="undo-checkin">↩ Αναίρεση Check in</button>
+    <button type="button" data-action="undo-checkout">↩ Αναίρεση Check out</button>
+
+    <div class="context-menu-separator"></div>
+    <button type="button" data-action="edit">✎ Επεξεργασία κράτησης</button>
+    <button type="button" data-action="cancel">✖ Ακύρωση κράτησης</button>
+  </div>
+
+
+  <!-- Συννεφάκι αφίξεων σήμερα & αύριο -->
+  <div id="arrivalsBubble" class="arrival-bubble-wrapper hidden">
+    <div class="arrival-bubble">
+      <h4>Αφίξεις σήμερα &amp; αύριο</h4>
+      <div id="arrivalsBubbleContent" class="arrival-bubble-content"></div>
+      <div class="arrival-bubble-actions">
+        <button type="button" id="arrivalsBubbleOkBtn" class="btn-secondary btn-small arrival-bubble-ok">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "accommodation_bookings_v1";
+    const ACCOM_NAMES_KEY = "accommodation_names_v1";
+    const TITLE_KEY = "calendar_main_title_v1";
+
+    const DEFAULT_ACCOMMODATIONS = [
+      "Studio 1",
+      "Studio 2",
+      "Studio 3",
+      "Studio 4",
+      "Apartment 1",
+      "Apartment 2",
+      "Apartment 3",
+      "Apartment 4"
+    ];
+
+    let ACCOMMODATIONS = [...DEFAULT_ACCOMMODATIONS];
+
+    const VIEW_WINDOW_DAYS = 30;
+    const DAY_MS = 24 * 60 * 60 * 1000;
+
+    let viewStartDate;
+    let notificationsEnabled = false;
+    let dayPixelWidth = 0;
+    let rowPixelHeight = 40;
+    let selectedBookingId = null;
+    let editingBookingId = null;
+    let selectedAccommodationIndex = null;
+
+    let dragState = null;
+    let contextMenuBookingId = null;
+
+    let cleaningStartDate = null;
+    let cleaningDays = 7;
+
+    /* ---------- Βοηθητικά για ημερομηνίες ---------- */
+
+    function pad(num) {
+      return num < 10 ? "0" + num : String(num);
+    }
+
+    function formatDateISO(year, month, day) {
+      return year + "-" + pad(month + 1) + "-" + pad(day);
+    }
+
+    function formatDisplayDate(iso) {
+      if (!iso) return "";
+      const [y, m, d] = iso.split("-");
+      return d + "/" + m + "/" + y.slice(2);
+    }
+
+    function getTodayISO() {
+      const now = new Date();
+      return formatDateISO(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function getTodayDate() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function getTomorrowISO() {
+      const now = new Date();
+      now.setDate(now.getDate() + 1);
+      return formatDateISO(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date.getTime());
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function sameDay(a, b) {
+      return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+      );
+    }
+
+    /* ---------- Guests rule ---------- */
+
+    function maxGuestsForAccommodation(name) {
+      if (!name) return 99;
+      const lower = name.toLowerCase();
+      if (lower.includes("studio")) return 2;
+      if (lower.includes("apartment")) return 4;
+      return 99;
+    }
+
+    /* ---------- Αποθήκευση καταλυμάτων / κρατήσεων ---------- */
+
+    function loadBookings() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("Σφάλμα ανάγνωσης δεδομένων:", e);
+        return [];
+      }
+    }
+
+    function saveBookings(bookings) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    }
+
+    function loadAccommodations() {
+      const raw = localStorage.getItem(ACCOM_NAMES_KEY);
+      if (!raw) {
+        ACCOMMODATIONS = [...DEFAULT_ACCOMMODATIONS];
+        return;
+      }
+      try {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length) {
+          ACCOMMODATIONS = arr;
+        } else {
+          ACCOMMODATIONS = [...DEFAULT_ACCOMMODATIONS];
+        }
+      } catch (e) {
+        ACCOMMODATIONS = [...DEFAULT_ACCOMMODATIONS];
+      }
+    }
+
+    function saveAccommodations() {
+      localStorage.setItem(ACCOM_NAMES_KEY, JSON.stringify(ACCOMMODATIONS));
+    }
+
+    function populateAccommodationSelects() {
+      const mainSel = document.getElementById("accommodation");
+      const editSel = document.getElementById("editAccommodation");
+
+      [mainSel, editSel].forEach((sel, idx) => {
+        if (!sel) return;
+        sel.innerHTML = "";
+        if (idx === 0) { // φόρμα νέας κράτησης
+          const placeholder = document.createElement("option");
+          placeholder.value = "";
+          placeholder.textContent = "-- Επιλέξτε --";
+          placeholder.disabled = true;
+          placeholder.selected = true;
+          sel.appendChild(placeholder);
+        }
+        ACCOMMODATIONS.forEach(name => {
+          const opt = document.createElement("option");
+          opt.value = name;
+          opt.textContent = name;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    /* ---------- Overbooking / overlap ---------- */
+
+    function filterBookingsForRange(bookings, startDate, endDate) {
+      return bookings.filter(b => {
+        const inDate = new Date(b.checkIn);
+        const outDate = new Date(b.checkOut);
+        return inDate < addDays(endDate, 1) && outDate > startDate;
+      });
+    }
+
+    function computeOverbookedIds(bookings) {
+      const overbooked = new Set();
+      const byAcc = {};
+      for (const b of bookings) {
+        if (!byAcc[b.accommodation]) byAcc[b.accommodation] = [];
+        byAcc[b.accommodation].push(b);
+      }
+      for (const acc in byAcc) {
+        const arr = byAcc[acc];
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            const a = arr[i];
+            const b = arr[j];
+            if (new Date(a.checkIn) < new Date(b.checkOut) &&
+                new Date(b.checkIn) < new Date(a.checkOut)) {
+              overbooked.add(a.id);
+              overbooked.add(b.id);
+            }
+          }
+        }
+      }
+      return overbooked;
+    }
+
+    function hasOverlap(accommodation, newCheckInISO, newCheckOutISO, ignoreId) {
+      const bookings = loadBookings();
+      const newIn = new Date(newCheckInISO);
+      const newOut = new Date(newCheckOutISO);
+
+      for (const b of bookings) {
+        if (b.accommodation !== accommodation) continue;
+        if (ignoreId && b.id === ignoreId) continue;
+
+        const inD = new Date(b.checkIn);
+        const outD = new Date(b.checkOut);
+
+        // overlap αν [newIn, newOut) τέμνει [inD, outD)
+        if (newIn < outD && inD < newOut) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /* ---------- Legend & accommodations ---------- */
+
+    function renderLegend() {
+      const legend = document.getElementById("accommodationLegend");
+      legend.innerHTML = ACCOMMODATIONS.map(
+        (name, idx) => `
+        <span class="legend-item">
+          <span class="legend-color acc-${idx}"></span>
+          <span>${name}</span>
+        </span>
+      `
+      ).join("");
+    }
+
+    function selectAccommodation(rowIndex) {
+      selectedAccommodationIndex = rowIndex;
+      document.querySelectorAll(".tg-row-label").forEach((el, idx) => {
+        el.classList.toggle("selected-accommodation", idx === rowIndex);
+      });
+    }
+
+    function editAccommodationName(index) {
+      const oldName = ACCOMMODATIONS[index];
+      const newName = prompt("Νέο όνομα καταλύματος:", oldName);
+      if (!newName) return;
+      const trimmed = newName.trim();
+      if (!trimmed || trimmed === oldName) return;
+
+      ACCOMMODATIONS[index] = trimmed;
+      saveAccommodations();
+
+      const bookings = loadBookings();
+      bookings.forEach(b => {
+        if (b.accommodation === oldName) {
+          b.accommodation = trimmed;
+        }
+      });
+      saveBookings(bookings);
+
+      populateAccommodationSelects();
+      renderLegend();
+      renderTimeline();
+      renderArrivalsPanel();
+      renderDashboard();
+    }
+
+    function addAccommodation() {
+      const name = prompt("Όνομα νέου καταλύματος:");
+      if (!name) return;
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      if (ACCOMMODATIONS.includes(trimmed)) {
+        alert("Υπάρχει ήδη κατάλυμα με αυτό το όνομα.");
+        return;
+      }
+      ACCOMMODATIONS.push(trimmed);
+      saveAccommodations();
+      populateAccommodationSelects();
+      renderLegend();
+      renderTimeline();
+      renderArrivalsPanel();
+      renderDashboard();
+    }
+
+    function removeAccommodation() {
+      if (selectedAccommodationIndex === null) {
+        alert("Πρώτα επίλεξε ένα κατάλυμα από την αριστερή στήλη.");
+        return;
+      }
+      const name = ACCOMMODATIONS[selectedAccommodationIndex];
+      if (!confirm(`Είσαι σίγουρος ότι θέλεις να διαγράψεις το κατάλυμα "${name}" και όλες τις κρατήσεις του;`)) {
+        return;
+      }
+
+      ACCOMMODATIONS.splice(selectedAccommodationIndex, 1);
+      saveAccommodations();
+
+      let bookings = loadBookings();
+      bookings = bookings.filter(b => b.accommodation !== name);
+      saveBookings(bookings);
+
+      selectedAccommodationIndex = null;
+      alert("Το κατάλυμα διαγράφηκε επιτυχώς.");
+
+      populateAccommodationSelects();
+      renderLegend();
+      renderTimeline();
+      renderArrivalsPanel();
+      renderDashboard();
+    }
+
+    /* ---------- Ειδοποιήσεις & Arrivals ---------- */
+
+    function renderArrivalsPanel() {
+      const bubble = document.getElementById("arrivalsBubble");
+      const contentEl = document.getElementById("arrivalsBubbleContent");
+      if (!bubble || !contentEl) return;
+
+      const bookings = loadBookings();
+      const todayISO = getTodayISO();
+      const tomorrowISO = getTomorrowISO();
+
+      const todays = bookings.filter((b) => b.checkIn === todayISO);
+      const tomorrows = bookings.filter((b) => b.checkIn === tomorrowISO);
+
+      const makeList = (arr) => {
+        if (!arr.length) return "<p>Καμία.</p>";
+        return (
+          "<ul>" +
+          arr
+            .map(
+              (b) => `
+          <li>
+            <strong>${b.accommodation}</strong> – ${
+                b.guestName || "Χωρίς όνομα"
+              }
+            ${b.phone ? " (" + b.phone + ")" : ""}
+          </li>
+        `
+            )
+            .join("") +
+          "</ul>"
+        );
+      };
+
+      contentEl.innerHTML = `
+        <div class="arrivals-group">
+          <strong>Σήμερα (${formatDisplayDate(todayISO)}):</strong>
+          ${makeList(todays)}
+        </div>
+        <div class="arrivals-group">
+          <strong>Αύριο (${formatDisplayDate(tomorrowISO)}):</strong>
+          ${makeList(tomorrows)}
+        </div>
+      `;
+
+      bubble.classList.remove("hidden");
+    }
+
+    function initNotifications() {
+      const btn = document.getElementById("enableNotificationsBtn");
+
+      if (!btn) return;
+
+      if (!("Notification" in window)) {
+        btn.textContent = "Ειδοποιήσεις μη διαθέσιμες";
+        btn.disabled = true;
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        notificationsEnabled = true;
+        btn.textContent = "Ειδοποιήσεις ενεργές";
+      } else {
+        btn.textContent = "Ενεργοποίηση ειδοποιήσεων";
+      }
+
+      btn.addEventListener("click", () => {
+        if (!("Notification" in window)) {
+          alert("Ο browser δεν υποστηρίζει ειδοποιήσεις.");
+          return;
+        }
+
+        if (Notification.permission === "granted") {
+          notificationsEnabled = true;
+          btn.textContent = "Ειδοποιήσεις ενεργές";
+          alert("Οι ειδοποιήσεις είναι ήδη ενεργές για αυτή τη σελίδα.");
+          return;
+        }
+
+        if (Notification.permission === "denied") {
+          alert(
+            "Οι ειδοποιήσεις είναι μπλοκαρισμένες. Άλλαξε τη ρύθμιση από τον browser σου."
+          );
+          return;
+        }
+
+        Notification.requestPermission().then((result) => {
+          if (result === "granted") {
+            notificationsEnabled = true;
+            btn.textContent = "Ειδοποιήσεις ενεργές";
+            alert("Οι ειδοποιήσεις ενεργοποιήθηκαν.");
+            notifyTomorrowArrivalsOnce();
+          } else {
+            alert("Οι ειδοποιήσεις δεν ενεργοποιήθηκαν.");
+          }
+        });
+      });
+    }
+
+    function sendNotification(title, body) {
+      if (!notificationsEnabled) return;
+      if (!("Notification" in window)) return;
+      if (Notification.permission !== "granted") return;
+      try {
+        new Notification(title, { body });
+      } catch (e) {
+        console.error("Σφάλμα ειδοποίησης:", e);
+      }
+    }
+
+    function notifyTomorrowArrivalsOnce() {
+      const bookings = loadBookings();
+      const tomorrowISO = getTomorrowISO();
+      const tomorrows = bookings.filter((b) => b.checkIn === tomorrowISO);
+      if (tomorrows.length) {
+        sendNotification(
+          "Αφίξεις για αύριο",
+          "Υπάρχουν " +
+            tomorrows.length +
+            " αφίξεις για " +
+            formatDisplayDate(tomorrowISO) +
+            "."
+        );
+      }
+    }
+
+    /* ---------- Επιλογή / Context menu ---------- */
+
+    function selectBooking(id) {
+      selectedBookingId = id;
+      document.querySelectorAll(".booking").forEach((el) => {
+        el.classList.toggle(
+          "selected",
+          !!id && el.dataset.bookingId === String(id)
+        );
+      });
+    }
+
+        function updateBookingStatus(id, status) {
+      const bookings = loadBookings();
+      const idx = bookings.findIndex(b => b.id === id);
+      if (idx === -1) return;
+
+      if (!status) {
+        // Αναίρεση: καθαρίζουμε εντελώς το status (φεύγει το ✔ από την κράτηση)
+        delete bookings[idx].status;
+      } else {
+        // Κανονικό Check in / Check out
+        bookings[idx].status = status;
+      }
+
+      saveBookings(bookings);
+      renderTimeline();
+      renderDashboard();
+      renderArrivalsPanel();
+    
+    }
+
+    function rightClickCancel(bookingId) {
+      const bookings = loadBookings();
+      const b = bookings.find((x) => x.id === bookingId);
+      if (!b) return;
+      if (
+        !confirm(
+          `Θέλεις σίγουρα να ακυρώσεις την κράτηση του/της "${b.guestName}" στο ${b.accommodation};`
+        )
+      )
+        return;
+
+      const updated = bookings.filter((x) => x.id !== bookingId);
+      saveBookings(updated);
+      selectedBookingId = null;
+      renderTimeline();
+      renderArrivalsPanel();
+      renderDashboard();
+    }
+
+    function showContextMenu(bookingId, x, y) {
+      contextMenuBookingId = bookingId;
+      const menu = document.getElementById("bookingContextMenu");
+      menu.style.left = x + "px";
+      menu.style.top = y + "px";
+      menu.classList.remove("hidden");
+    }
+
+    function hideContextMenu() {
+      contextMenuBookingId = null;
+      const menu = document.getElementById("bookingContextMenu");
+      menu.classList.add("hidden");
+    }
+
+        function setupContextMenu() {
+      const menu = document.getElementById("bookingContextMenu");
+      menu.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const action = ev.target.getAttribute("data-action");
+        if (!action || !contextMenuBookingId) return;
+
+        if (action === "checkin") {
+          updateBookingStatus(contextMenuBookingId, "in");
+        } else if (action === "checkout") {
+          updateBookingStatus(contextMenuBookingId, "out");
+        } else if (action === "undo-checkin") {
+          // Αναίρεση check in → καθαρίζουμε το status
+          updateBookingStatus(contextMenuBookingId, "");
+        } else if (action === "undo-checkout") {
+          // Αναίρεση check out → καθαρίζουμε το status
+          updateBookingStatus(contextMenuBookingId, "");
+        } else if (action === "cancel") {
+          rightClickCancel(contextMenuBookingId);
+        } else if (action === "edit") {
+          openEditModal(contextMenuBookingId);
+        }
+
+        hideContextMenu();
+      });
+
+      document.addEventListener("click", () => {
+        hideContextMenu();
+      });
+      document.addEventListener("scroll", () => {
+        hideContextMenu();
+      }, true);
+    
+    }
+
+    /* ---------- Modal επεξεργασίας ---------- */
+
+    function openEditModal(bookingId) {
+      const bookings = loadBookings();
+      const b = bookings.find((x) => x.id === bookingId);
+      if (!b) return;
+
+      editingBookingId = bookingId;
+
+      document.getElementById("editGuestName").value = b.guestName || "";
+      const editAccSelect = document.getElementById("editAccommodation");
+      if (!ACCOMMODATIONS.includes(b.accommodation)) {
+        ACCOMMODATIONS.push(b.accommodation);
+        saveAccommodations();
+        populateAccommodationSelects();
+        renderLegend();
+      }
+      editAccSelect.value = b.accommodation || "";
+      document.getElementById("editPhone").value = b.phone || "";
+      document.getElementById("editEmail").value = b.email || "";
+      document.getElementById("editCheckIn").value = b.checkIn || "";
+      document.getElementById("editCheckOut").value = b.checkOut || "";
+      document.getElementById("editNotes").value = b.notes || "";
+      document.getElementById("editGuests").value = b.guests || 1;
+
+      document.getElementById("editModalBackdrop").classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      editingBookingId = null;
+      document.getElementById("editModalBackdrop").classList.add("hidden");
+    }
+
+    function setupEditModal() {
+      const backdrop = document.getElementById("editModalBackdrop");
+      const closeBtn = document.getElementById("editModalClose");
+      const cancelBtn = document.getElementById("editCancelBtn");
+      const form = document.getElementById("editBookingForm");
+
+      closeBtn.addEventListener("click", closeEditModal);
+      cancelBtn.addEventListener("click", closeEditModal);
+
+      backdrop.addEventListener("click", (ev) => {
+        if (ev.target === backdrop) closeEditModal();
+      });
+
+      form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        if (!editingBookingId) return;
+
+        const bookings = loadBookings();
+        const idx = bookings.findIndex((b) => b.id === editingBookingId);
+        if (idx === -1) return;
+
+        const guestName = document
+          .getElementById("editGuestName")
+          .value.trim();
+        const accommodation = document.getElementById(
+          "editAccommodation"
+        ).value;
+        const phone = document.getElementById("editPhone").value.trim();
+        const email = document.getElementById("editEmail").value.trim();
+        const checkIn = document.getElementById("editCheckIn").value;
+        const checkOut = document.getElementById("editCheckOut").value;
+        const notes = document.getElementById("editNotes").value.trim();
+        const guestsVal = parseInt(
+          document.getElementById("editGuests").value || "0",
+          10
+        );
+
+        if (!guestName || !accommodation || !checkIn || !checkOut) {
+          alert(
+            "Συμπλήρωσε τουλάχιστον όνομα, κατάλυμα, check-in και check-out."
+          );
+          return;
+        }
+        if (checkOut <= checkIn) {
+          alert("Το check-out πρέπει να είναι μετά το check-in.");
+          return;
+        }
+        if (!guestsVal || guestsVal < 1) {
+          alert("Δώσε τον αριθμό ατόμων (τουλάχιστον 1).");
+          return;
+        }
+        const maxG = maxGuestsForAccommodation(accommodation);
+        if (guestsVal > maxG) {
+          alert(
+            `Το κατάλυμα "${accommodation}" επιτρέπει μέχρι ${maxG} άτομα.`
+          );
+          return;
+        }
+
+        if (hasOverlap(accommodation, checkIn, checkOut, editingBookingId)) {
+          alert("Δεν επιτρέπεται διπλή κράτηση για το ίδιο κατάλυμα στις ίδιες ημερομηνίες.");
+          return;
+        }
+
+        const b = bookings[idx];
+        b.guestName = guestName;
+        b.accommodation = accommodation;
+        b.phone = phone;
+        b.email = email;
+        b.checkIn = checkIn;
+        b.checkOut = checkOut;
+        b.notes = notes;
+        b.guests = guestsVal;
+
+        saveBookings(bookings);
+        closeEditModal();
+        renderTimeline();
+        renderArrivalsPanel();
+        renderDashboard();
+      });
+    }
+
+    /* ---------- Drag & drop ---------- */
+
+    function startDrag(ev, bookingId) {
+      if (ev.button !== 0) return;
+      ev.preventDefault();
+
+      const bookings = loadBookings();
+      const booking = bookings.find((b) => b.id === bookingId);
+      if (!booking) return;
+
+      const rowIndex = ACCOMMODATIONS.indexOf(booking.accommodation);
+      if (rowIndex === -1) return;
+
+      dragState = {
+        id: bookingId,
+        startX: ev.clientX,
+        startY: ev.clientY,
+        originalCheckIn: new Date(booking.checkIn),
+        originalCheckOut: new Date(booking.checkOut),
+        originalRowIndex: rowIndex
+      };
+
+      const onMove = (e) => handleDragMove(e);
+      const onUp = (e) => handleDragEnd(e, onMove, onUp);
+
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    }
+
+    function handleDragMove(ev) {
+      if (!dragState || !dayPixelWidth) return;
+      const dx = ev.clientX - dragState.startX;
+      const el = document.querySelector(
+        `.booking[data-booking-id="${dragState.id}"]`
+      );
+      if (!el) return;
+      el.style.transform = `translateX(${dx}px)`;
+    }
+
+    function handleDragEnd(ev, onMove, onUp) {
+      if (!dragState || !dayPixelWidth) {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        dragState = null;
+        return;
+      }
+
+      const dx = ev.clientX - dragState.startX;
+      const dayDelta = Math.round(dx / dayPixelWidth);
+
+      const el = document.querySelector(
+        `.booking[data-booking-id="${dragState.id}"]`
+      );
+      if (el) el.style.transform = "";
+
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+
+      const grid = document.getElementById("timelineGrid");
+      const rect = grid.getBoundingClientRect();
+      const relativeY = ev.clientY - rect.top;
+      let targetRowIndex = Math.floor(relativeY / rowPixelHeight) - 1;
+      if (targetRowIndex < 0 || targetRowIndex >= ACCOMMODATIONS.length) {
+        targetRowIndex = dragState.originalRowIndex;
+      }
+
+      if (dayDelta === 0 && targetRowIndex === dragState.originalRowIndex) {
+        dragState = null;
+        return;
+      }
+
+      const bookings = loadBookings();
+      const idx = bookings.findIndex((b) => b.id === dragState.id);
+      if (idx === -1) {
+        dragState = null;
+        return;
+      }
+
+      const newCheckInDate = addDays(dragState.originalCheckIn, dayDelta);
+      const newCheckOutDate = addDays(dragState.originalCheckOut, dayDelta);
+      const newCheckInISO = newCheckInDate.toISOString().slice(0, 10);
+      const newCheckOutISO = newCheckOutDate.toISOString().slice(0, 10);
+      const newAcc = ACCOMMODATIONS[targetRowIndex];
+
+      if (hasOverlap(newAcc, newCheckInISO, newCheckOutISO, dragState.id)) {
+        alert("Δεν επιτρέπεται διπλή κράτηση για το ίδιο κατάλυμα στις ίδιες ημερομηνίες.");
+        renderTimeline();
+        renderArrivalsPanel();
+        renderDashboard();
+        dragState = null;
+        return;
+      }
+
+      bookings[idx].checkIn = newCheckInISO;
+      bookings[idx].checkOut = newCheckOutISO;
+      bookings[idx].accommodation = newAcc;
+
+      saveBookings(bookings);
+
+      renderTimeline();
+      renderArrivalsPanel();
+      renderDashboard();
+
+      dragState = null;
+    }
+
+    /* ---------- Timeline render ---------- */
+
+    function renderTimeline() {
+      const grid = document.getElementById("timelineGrid");
+      const monthLabel = document.getElementById("currentMonthLabel");
+      const summaryBar = document.getElementById("summaryBar");
+
+      const bookings = loadBookings();
+      const viewEndDate = addDays(viewStartDate, VIEW_WINDOW_DAYS - 1);
+
+      const rangeBookings = filterBookingsForRange(
+        bookings,
+        viewStartDate,
+        viewEndDate
+      );
+      const overbookedIds = computeOverbookedIds(bookings);
+
+      const dayWidthPx = 60;
+      grid.style.gridTemplateColumns = `180px repeat(${VIEW_WINDOW_DAYS}, ${dayWidthPx}px)`;
+
+      const startISO = formatDateISO(
+        viewStartDate.getFullYear(),
+        viewStartDate.getMonth(),
+        viewStartDate.getDate()
+      );
+      const endISO = formatDateISO(
+        viewEndDate.getFullYear(),
+        viewEndDate.getMonth(),
+        viewEndDate.getDate()
+      );
+      monthLabel.textContent =
+        "Περίοδος: " +
+        formatDisplayDate(startISO) +
+        "  –  " +
+        formatDisplayDate(endISO);
+
+      grid.innerHTML = "";
+
+      // header row
+      const headerLabel = document.createElement("div");
+      headerLabel.className = "tg-cell tg-header tg-header-label";
+      headerLabel.style.gridRow = "1";
+      headerLabel.style.gridColumn = "1";
+      headerLabel.textContent = "Κατάλυμα (κλικ για επιλογή, διπλό κλικ για μετονομασία)";
+      grid.appendChild(headerLabel);
+
+      for (let day = 0; day < VIEW_WINDOW_DAYS; day++) {
+        const date = addDays(viewStartDate, day);
+        const weekday = (date.getDay() + 6) % 7;
+        const cell = document.createElement("div");
+        cell.className = "tg-cell tg-header";
+        cell.style.gridRow = "1";
+        cell.style.gridColumn = (day + 2).toString();
+        const numberSpan = document.createElement("span");
+        numberSpan.className = "day-number";
+        numberSpan.textContent = pad(date.getDate());
+        const weekSpan = document.createElement("span");
+        weekSpan.className = "day-week";
+        const weekdayNames = ["Δε", "Τρ", "Τε", "Πε", "Πα", "Σα", "Κυ"];
+        weekSpan.textContent = weekdayNames[weekday];
+        cell.appendChild(numberSpan);
+        cell.appendChild(weekSpan);
+        grid.appendChild(cell);
+      }
+
+      // rows
+      ACCOMMODATIONS.forEach((acc, rowIndex) => {
+        const row = rowIndex + 2;
+
+        const labelCell = document.createElement("div");
+        labelCell.className = "tg-cell tg-row-label";
+        if (rowIndex === selectedAccommodationIndex) {
+          labelCell.classList.add("selected-accommodation");
+        }
+        labelCell.style.gridRow = row.toString();
+        labelCell.style.gridColumn = "1";
+        labelCell.textContent = acc;
+        labelCell.dataset.rowIndex = rowIndex.toString();
+        labelCell.title = "Κλικ για επιλογή, διπλό κλικ για αλλαγή ονόματος";
+        labelCell.addEventListener("click", () => selectAccommodation(rowIndex));
+        labelCell.addEventListener("dblclick", () => editAccommodationName(rowIndex));
+        grid.appendChild(labelCell);
+
+        for (let day = 0; day < VIEW_WINDOW_DAYS; day++) {
+          const date = addDays(viewStartDate, day);
+          const weekday = date.getDay();
+          const cell = document.createElement("div");
+          cell.className =
+            "tg-cell tg-day" +
+            (weekday === 0 || weekday === 6 ? " tg-weekend" : "");
+          cell.style.gridRow = row.toString();
+          cell.style.gridColumn = (day + 2).toString();
+          grid.appendChild(cell);
+        }
+      });
+
+      // μετράμε πλάτος/ύψη
+      const sampleDay = grid.querySelector(".tg-day");
+      if (sampleDay) {
+        dayPixelWidth = sampleDay.getBoundingClientRect().width;
+      }
+      const sampleRow = grid.querySelector(".tg-row-label");
+      if (sampleRow) {
+        rowPixelHeight = sampleRow.getBoundingClientRect().height;
+      }
+      const labelCellExample = grid.querySelector(".tg-row-label");
+      const headerCellExample = grid.querySelector(".tg-header");
+      const labelWidth = labelCellExample
+        ? labelCellExample.getBoundingClientRect().width
+        : 180;
+      const headerHeight = headerCellExample
+        ? headerCellExample.getBoundingClientRect().height
+        : 40;
+
+      // bookings ως absolute μπάρες
+      for (const b of rangeBookings) {
+        const rowIndex = ACCOMMODATIONS.indexOf(b.accommodation);
+        if (rowIndex === -1) continue;
+
+        const checkInDate = new Date(b.checkIn);
+        const checkOutDate = new Date(b.checkOut);
+
+        const startClamped = new Date(
+          Math.max(checkInDate.getTime(), viewStartDate.getTime())
+        );
+        const endClamped = new Date(
+          Math.min(checkOutDate.getTime(), viewEndDate.getTime())
+        );
+
+        const startIndex =
+          Math.floor((startClamped - viewStartDate) / DAY_MS) + 1;
+        const endIndex =
+          Math.floor((endClamped - viewStartDate) / DAY_MS) + 1;
+
+        const startIndexClamped = Math.max(1, Math.min(VIEW_WINDOW_DAYS, startIndex));
+        const endIndexClamped = Math.max(1, Math.min(VIEW_WINDOW_DAYS, endIndex));
+
+        if (endIndexClamped < startIndexClamped) continue;
+
+        const left =
+          labelWidth + (startIndexClamped - 0.5) * dayPixelWidth + 2;
+        const right =
+          labelWidth + (endIndexClamped - 0.5) * dayPixelWidth - 2;
+        const width = Math.max(dayPixelWidth * 0.6, right - left);
+
+        const bar = document.createElement("div");
+        const accIndex = rowIndex;
+        const over = overbookedIds.has(b.id);
+        bar.className =
+          `booking acc-${accIndex}` + (over ? " overbooked" : "");
+        bar.dataset.bookingId = b.id;
+        bar.dataset.rowIndex = rowIndex.toString();
+
+        const barHeight = 20;
+        const top =
+          headerHeight +
+          rowIndex * rowPixelHeight +
+          (rowPixelHeight - barHeight) / 2;
+
+        bar.style.left = left + "px";
+        bar.style.top = top + "px";
+        bar.style.width = width + "px";
+
+        const titleText =
+          (b.accommodation || "") +
+          " - " +
+          (b.guestName || "") +
+          "\nΆτομα: " +
+          (b.guests || "-") +
+          "\nΤηλέφωνο: " +
+          (b.phone || "") +
+          "\nEmail: " +
+          (b.email || "") +
+          "\nCheck-in: " +
+          formatDisplayDate(b.checkIn || "") +
+          "\nCheck-out: " +
+          formatDisplayDate(b.checkOut || "") +
+          (b.notes ? "\nΣημειώσεις: " + b.notes : "");
+        bar.title = titleText;
+
+        if (b.status === "in" || b.status === "out") {
+          const tickSpan = document.createElement("span");
+          tickSpan.textContent = "✔";
+          tickSpan.className =
+            "booking-tick " +
+            (b.status === "in" ? "booking-tick-in" : "booking-tick-out");
+          bar.appendChild(tickSpan);
+        }
+
+        const guestSpan = document.createElement("span");
+        guestSpan.className = "booking-guest";
+        guestSpan.textContent = b.guestName || "Χωρίς όνομα";
+        bar.appendChild(guestSpan);
+
+        bar.addEventListener("mousedown", (ev) => startDrag(ev, b.id));
+        bar.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          selectBooking(b.id);
+        });
+        bar.addEventListener("dblclick", (ev) => {
+          ev.stopPropagation();
+          openEditModal(b.id);
+        });
+        bar.addEventListener("contextmenu", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          selectBooking(b.id);
+          showContextMenu(b.id, ev.clientX, ev.clientY);
+        });
+
+        grid.appendChild(bar);
+      }
+
+      const totalStored = bookings.length;
+      const totalShown = rangeBookings.length;
+      const totalNights = rangeBookings.reduce((sum, b) => {
+        const nights = Math.max(
+          0,
+          (new Date(b.checkOut) - new Date(b.checkIn)) / DAY_MS
+        );
+        return sum + nights;
+      }, 0);
+
+      summaryBar.innerHTML = `
+        <span>Κρατήσεις στο διάστημα: <strong>${totalShown}</strong> <span class="pill">σε ${totalStored} συνολικά</span></span>
+        <span>Σύνολο διανυκτερεύσεων: <strong>${Math.round(
+          totalNights
+        )}</strong></span>
+      `;
+
+      grid.addEventListener("click", () => {
+        selectBooking(null);
+      });
+    }
+
+    /* ---------- Dashboard ---------- */
+
+    function renderDashboard() {
+      const bookings = loadBookings();
+      const todayDate = getTodayDate();
+      const todayISO = getTodayISO();
+      const tomorrowISO = getTomorrowISO();
+
+      const arrivalsToday = bookings.filter(b => b.checkIn === todayISO);
+      const departuresToday = bookings.filter(b => b.checkOut === todayISO);
+      const stayingToday = bookings.filter(b => {
+        const inD = new Date(b.checkIn);
+        const outD = new Date(b.checkOut);
+        return inD <= todayDate && outD > todayDate;
+      });
+      const guestsToday = stayingToday.reduce((sum,b)=> sum + (b.guests || 1),0);
+      const newBookingsToday = bookings.filter(b => {
+        if (!b.createdAt) return false;
+        const d = new Date(b.createdAt);
+        const d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        return sameDay(d0, todayDate);
+      });
+
+      const todayStatsDiv = document.getElementById("todayStats");
+      todayStatsDiv.innerHTML = `
+        <div class="dash-metric"><span>Αφίξεις σήμερα:</span><strong>${arrivalsToday.length}</strong></div>
+        <div class="dash-metric"><span>Αναχωρήσεις σήμερα:</span><strong>${departuresToday.length}</strong></div>
+        <div class="dash-metric"><span>Άτομα που διαμένουν σήμερα:</span><strong>${guestsToday}</strong></div>
+        <div class="dash-metric"><span>Νέες κρατήσεις που καταχωρήθηκαν σήμερα:</span><strong>${newBookingsToday.length}</strong></div>
+      `;
+
+      const arrivalsTomorrow = bookings.filter(b => b.checkIn === tomorrowISO);
+      const departuresTomorrow = bookings.filter(b => b.checkOut === tomorrowISO);
+
+      const formatGroupList = (arr) => {
+        if (!arr.length) return "<em>Καμία</em>";
+        const byAcc = {};
+        arr.forEach(b => {
+          if (!byAcc[b.accommodation]) byAcc[b.accommodation] = 0;
+          byAcc[b.accommodation] += 1;
+        });
+        return Object.entries(byAcc)
+          .map(([acc,count]) => `${acc} (${count})`)
+          .join(", ");
+      };
+
+      const todayTomorrowDiv = document.getElementById("todayTomorrowStats");
+      todayTomorrowDiv.innerHTML = `
+        <div class="dash-metric"><span>Αφίξεις σήμερα:</span><strong>${arrivalsToday.length}</strong></div>
+        <div style="margin-left:6px; font-size:11px;">${formatGroupList(arrivalsToday)}</div>
+        <div class="dash-metric" style="margin-top:4px;"><span>Αφίξεις αύριο:</span><strong>${arrivalsTomorrow.length}</strong></div>
+        <div style="margin-left:6px; font-size:11px;">${formatGroupList(arrivalsTomorrow)}</div>
+        <div class="dash-metric" style="margin-top:4px;"><span>Αναχωρήσεις σήμερα:</span><strong>${departuresToday.length}</strong></div>
+        <div style="margin-left:6px; font-size:11px;">${formatGroupList(departuresToday)}</div>
+        <div class="dash-metric" style="margin-top:4px;"><span>Αναχωρήσεις αύριο:</span><strong>${departuresTomorrow.length}</strong></div>
+        <div style="margin-left:6px; font-size:11px;">${formatGroupList(departuresTomorrow)}</div>
+      `;
+
+      const table = document.getElementById("bookingListTable");
+      const sorted = bookings.slice().sort((a,b) => {
+        const da = a.createdAt ? new Date(a.createdAt) : new Date(0);
+        const db = b.createdAt ? new Date(b.createdAt) : new Date(0);
+        return db - da; // νεότερες πρώτα
+      });
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Ημερομηνία καταχώρησης</th>
+            <th>Κατάλυμα</th>
+            <th>Όνομα</th>
+            <th>Άτομα</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${
+            sorted.map((b, idx) => {
+              const createdText = b.createdAt
+                ? new Date(b.createdAt).toLocaleString()
+                : "-";
+              return `
+                <tr class="${idx === 0 ? "latest-booking" : ""}">
+                  <td>${createdText}</td>
+                  <td>${b.accommodation || ""}</td>
+                  <td>${b.guestName || ""}</td>
+                  <td>${b.guests || ""}</td>
+                  <td>${formatDisplayDate(b.checkIn || "")}</td>
+                  <td>${formatDisplayDate(b.checkOut || "")}</td>
+                </tr>
+              `;
+            }).join("") || `<tr><td colspan="6">Δεν υπάρχουν κρατήσεις.</td></tr>`
+          }
+        </tbody>
+      `;
+    }
+
+    /* ---------- Πρόγραμμα καθαριότητας ---------- */
+
+function renderCleaningTimeline() {
+  const grid = document.getElementById("cleaningTimelineGrid");
+  const rangeLabel = document.getElementById("cleaningRangeLabel");
+  const bookings = loadBookings();
+  if (!grid || !rangeLabel) return;
+
+  // Βασικές ημερομηνίες
+  const startDate = cleaningStartDate || getTodayDate();
+  const start = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
+  );
+  const days = Math.max(1, cleaningDays || 7);
+  const end = addDays(start, days - 1);
+
+  const rangeBookings = filterBookingsForRange(bookings, start, end);
+
+  // Ετικέτα εύρους
+  const startISO = formatDateISO(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate()
+  );
+  const endISO = formatDateISO(
+    end.getFullYear(),
+    end.getMonth(),
+    end.getDate()
+  );
+  rangeLabel.textContent =
+    "Περίοδος καθαριότητας: " +
+    formatDisplayDate(startISO) +
+    " – " +
+    formatDisplayDate(endISO);
+
+  // Στήλες / grid
+  const dayWidthPx = 70;
+  grid.style.gridTemplateColumns = `180px repeat(${days}, ${dayWidthPx}px)`;
+  grid.innerHTML = "";
+
+  // Header (ημέρες)
+  const headerLabel = document.createElement("div");
+  headerLabel.className = "tg-cell tg-header tg-header-label";
+  headerLabel.style.gridRow = "1";
+  headerLabel.style.gridColumn = "1";
+  headerLabel.textContent = "Κατάλυμα";
+  grid.appendChild(headerLabel);
+
+  for (let day = 0; day < days; day++) {
+    const date = addDays(start, day);
+    const weekday = (date.getDay() + 6) % 7;
+    const cell = document.createElement("div");
+    cell.className = "tg-cell tg-header";
+    cell.style.gridRow = "1";
+    cell.style.gridColumn = (day + 2).toString();
+
+    const numberSpan = document.createElement("span");
+    numberSpan.className = "day-number";
+    numberSpan.textContent = pad(date.getDate());
+
+    const weekSpan = document.createElement("span");
+    weekSpan.className = "day-week";
+    const weekdayNames = ["Δε", "Τρ", "Τε", "Πε", "Πα", "Σα", "Κυ"];
+    weekSpan.textContent = weekdayNames[weekday];
+
+    cell.appendChild(numberSpan);
+    cell.appendChild(weekSpan);
+    grid.appendChild(cell);
+  }
+
+  // Γραμμές (καταλύματα) + κελιά ημερών
+  ACCOMMODATIONS.forEach((acc, rowIndex) => {
+    const row = rowIndex + 2;
+
+    const labelCell = document.createElement("div");
+    labelCell.className = "tg-cell tg-row-label";
+    labelCell.style.gridRow = row.toString();
+    labelCell.style.gridColumn = "1";
+    labelCell.textContent = acc;
+    grid.appendChild(labelCell);
+
+    for (let day = 0; day < days; day++) {
+      const cell = document.createElement("div");
+      cell.className = "tg-cell tg-day";
+      cell.style.gridRow = row.toString();
+      cell.style.gridColumn = (day + 2).toString();
+      // Βάζουμε data-row / data-col για να βρίσκουμε εύκολα το κελί μετά
+      cell.dataset.row = String(row);
+      cell.dataset.col = String(day + 2);
+      grid.appendChild(cell);
+    }
+  });
+
+  // Δημιουργούμε λεξικό για το τι πρέπει να φανεί σε κάθε κελί
+  const cellData = {}; // key: "row-col" => { types:Set, guestsIn:number|null }
+
+  // Βοηθητική για να γράφουμε events στο cellData
+  function addCellEvent(accIndex, date, type, guestsIn) {
+    if (date < start || date > end) return;
+    const dayIndex = Math.round((date - start) / DAY_MS);
+    if (dayIndex < 0 || dayIndex >= days) return;
+
+    const row = accIndex + 2;
+    const col = dayIndex + 2;
+    const key = `${row}-${col}`;
+
+    if (!cellData[key]) {
+      cellData[key] = {
+        types: new Set(),
+        guestsIn: null
+      };
+    }
+    cellData[key].types.add(type);
+    if (type === "in" && typeof guestsIn === "number") {
+      cellData[key].guestsIn = guestsIn;
+    }
+  }
+
+  // Κανόνες καθαριότητας για κάθε κράτηση
+  rangeBookings.forEach((b) => {
+    const accIndex = ACCOMMODATIONS.indexOf(b.accommodation);
+    if (accIndex === -1) return;
+
+    const inDate = new Date(b.checkIn);
+    const outDate = new Date(b.checkOut);
+    const guests = b.guests || 0;
+
+    // Πόσες μέρες από check-in μέχρι check-out (σε βήματα ημερών)
+    const totalStayDays = Math.round((outDate - inDate) / DAY_MS); // π.χ. 7 νύχτες => 7
+    const dayBeforeOutIndex = totalStayDays - 1; // index της μέρας πριν το check-out
+
+    // 1) ΗΜΕΡΑ ΑΦΙΞΗΣ (IN + άτομα, πράσινο)
+    if (inDate >= start && inDate <= end) {
+      addCellEvent(accIndex, inDate, "in", guests);
+    }
+
+    // 2) Ενδιάμεσες μέρες (παραμονή / αλλαγή σεντονιών)
+    // Από την επόμενη του check-in (inDate +1) μέχρι την προηγούμενη του check-out (outDate -1)
+    const firstMiddle = addDays(inDate, 1);
+    const lastMiddle = addDays(outDate, -1);
+
+    let cur = new Date(firstMiddle.getTime());
+    while (cur <= lastMiddle) {
+      if (cur >= start && cur <= end) {
+        const stayIndex = Math.round((cur - inDate) / DAY_MS); // 1,2,3,...
+
+        let type;
+        if (stayIndex === dayBeforeOutIndex) {
+          // Μια μέρα πριν την αναχώρηση ΠΑΝΤΑ "Παραμονή"
+          type = "stay";
+        } else if (stayIndex >= 2 && (stayIndex - 2) % 2 === 0) {
+          // Από την 3η μέρα και κάθε 2 μέρες "Αλλαγή σεντονιών"
+          type = "linen";
+        } else {
+          // Όλες οι υπόλοιπες ενδιάμεσες μέρες "Παραμονή"
+          type = "stay";
+        }
+
+        addCellEvent(accIndex, cur, type, null);
+      }
+      cur = addDays(cur, 1);
+    }
+
+    // 3) ΗΜΕΡΑ CHECK-OUT (OUT, κόκκινο)
+    if (outDate >= start && outDate <= end) {
+      addCellEvent(accIndex, outDate, "out", null);
+    }
+  });
+
+  // Τελική ζωγραφιά στα κελιά, με τους κανόνες:
+  // - In (πράσινο, + άτομα)
+  // - Παραμονή (μπλε)
+  // - Αλλαγή σεντονιών (μωβ)
+  // - Out (πορτοκαλί)
+  // - Αν την ίδια μέρα στο ίδιο κατάλυμα υπάρχει ΚΑΙ in ΚΑΙ out -> μισό πράσινο / μισό κόκκινο
+  Object.entries(cellData).forEach(([key, data]) => {
+    const [row, col] = key.split("-");
+    const cell = grid.querySelector(
+      `.tg-day[data-row="${row}"][data-col="${col}"]`
+    );
+    if (!cell) return;
+
+    const types = data.types;
+    let label = "";
+
+    // Περίπτωση ταυτόχρονα IN & OUT την ίδια μέρα στο ίδιο κατάλυμα
+    if (types.has("in") && types.has("out")) {
+      cell.style.background =
+        "linear-gradient(90deg, rgba(34,197,94,0.35) 0 50%, rgba(249,115,22,0.25) 50% 100%)";
+      label = "In" + (data.guestsIn ? ` (${data.guestsIn})` : "") + " / Out";
+    } else if (types.has("in")) {
+      cell.classList.add("clean-in");
+      label = "In" + (data.guestsIn ? ` (${data.guestsIn})` : "");
+    } else if (types.has("out")) {
+      cell.classList.add("clean-out");
+      label = "Out";
+    } else if (types.has("linen")) {
+      cell.classList.add("clean-linen");
+      label = "Αλλαγή σεντονιών";
+    } else if (types.has("stay")) {
+      cell.classList.add("clean-stay");
+      label = "Παραμονή";
+    }
+
+    if (label) {
+      cell.innerHTML = `<span class="clean-cell-label">${label}</span>`;
+    }
+  });
+}
+
+    /* ---------- Export Excel (απλό CSV) ---------- */
+
+    function exportToExcelLikeCSV() {
+      const bookings = loadBookings();
+      if (!bookings.length) {
+        alert("Δεν υπάρχουν κρατήσεις για εξαγωγή.");
+        return;
+      }
+
+      const header = [
+        "Κατάλυμα",
+        "Όνομα",
+        "Τηλέφωνο",
+        "Email",
+        "Άτομα",
+        "Check-in",
+        "Check-out",
+        "Σημειώσεις",
+        "Ημερομηνία καταχώρησης",
+        "Κατάσταση"
+      ];
+
+      const rows = bookings.map(b => [
+        b.accommodation || "",
+        b.guestName || "",
+        b.phone || "",
+        b.email || "",
+        b.guests || "",
+        b.checkIn || "",
+        b.checkOut || "",
+        (b.notes || "").replace(/\r?\n/g, " "),
+        b.createdAt ? new Date(b.createdAt).toLocaleString() : "",
+        b.status || ""
+      ]);
+
+      const csvContent = [header, ...rows]
+        .map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(";"))
+        .join("\r\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bookings_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* ---------- Main title editing ---------- */
+
+    function setupTitleEditing() {
+      const titleEl = document.getElementById("mainTitle");
+      if (!titleEl) return;
+
+      const saved = localStorage.getItem(TITLE_KEY);
+      if (saved) titleEl.textContent = saved;
+
+      titleEl.addEventListener("dblclick", () => {
+        const current = titleEl.textContent || "";
+        const newTitle = prompt("Νέος τίτλος:", current);
+        if (!newTitle) return;
+        const trimmed = newTitle.trim();
+        if (!trimmed) return;
+        titleEl.textContent = trimmed;
+        localStorage.setItem(TITLE_KEY, trimmed);
+      });
+    }
+
+    /* ---------- Πρόγραμμα καθαριότητας modal handlers ---------- */
+
+    function setupCleaningModal() {
+      const openBtn = document.getElementById("cleaningProgramBtn");
+      const closeBtn = document.getElementById("cleaningModalClose");
+      const backdrop = document.getElementById("cleaningModalBackdrop");
+      const startInput = document.getElementById("cleaningStartInput");
+      const daysInput = document.getElementById("cleaningDaysInput");
+      const applyBtn = document.getElementById("cleaningApplyBtn");
+
+      if (startInput) startInput.value = getTodayISO();
+
+      const open = () => {
+        cleaningStartDate = getTodayDate();
+        cleaningDays = parseInt(daysInput.value || "7", 10) || 7;
+        renderCleaningTimeline();
+        backdrop.classList.remove("hidden");
+      };
+      const close = () => {
+        backdrop.classList.add("hidden");
+      };
+
+      if (openBtn) openBtn.addEventListener("click", open);
+      if (closeBtn) closeBtn.addEventListener("click", close);
+      if (backdrop) {
+        backdrop.addEventListener("click", (ev) => {
+          if (ev.target === backdrop) close();
+        });
+      }
+      if (applyBtn) {
+        applyBtn.addEventListener("click", () => {
+          const val = startInput.value;
+          if (val) {
+            cleaningStartDate = new Date(val);
+          } else {
+            cleaningStartDate = getTodayDate();
+          }
+          cleaningDays = parseInt(daysInput.value || "7", 10) || 7;
+          renderCleaningTimeline();
+        });
+      }
+    }
+
+    /* ---------- Νέα Κράτηση modal ---------- */
+
+    function openNewBookingModal() {
+      const backdrop = document.getElementById("newBookingModalBackdrop");
+      if (!backdrop) return;
+      const form = document.getElementById("bookingForm");
+      if (form) form.reset();
+      const checkInInput = document.getElementById("checkIn");
+      const guestsInput = document.getElementById("guests");
+      if (checkInInput) checkInInput.value = getTodayISO();
+      if (guestsInput) guestsInput.value = 2;
+      backdrop.classList.remove("hidden");
+    }
+
+    function closeNewBookingModal() {
+      const backdrop = document.getElementById("newBookingModalBackdrop");
+      if (!backdrop) return;
+      backdrop.classList.add("hidden");
+    }
+
+    function setupNewBookingModal() {
+      const newBookingBtn = document.getElementById("newBookingBtn");
+      const closeBtn = document.getElementById("newBookingModalClose");
+      const backdrop = document.getElementById("newBookingModalBackdrop");
+
+      if (newBookingBtn) {
+        newBookingBtn.addEventListener("click", openNewBookingModal);
+      }
+      if (closeBtn) {
+        closeBtn.addEventListener("click", closeNewBookingModal);
+      }
+      if (backdrop) {
+        backdrop.addEventListener("click", (ev) => {
+          if (ev.target === backdrop) closeNewBookingModal();
+        });
+      }
+    }
+
+    /* ---------- Φόρμα νέας κράτησης ---------- */
+
+    function handleFormSubmit(ev) {
+      ev.preventDefault();
+
+      const guestName = document.getElementById("guestName").value.trim();
+      const accommodation = document.getElementById("accommodation").value;
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const checkIn = document.getElementById("checkIn").value;
+      const checkOut = document.getElementById("checkOut").value;
+      const notes = document.getElementById("notes").value.trim();
+      const guestsVal = parseInt(
+        document.getElementById("guests").value || "0",
+        10
+      );
+
+      if (!guestName || !accommodation || !checkIn || !checkOut) {
+        alert(
+          "Συμπλήρωσε τουλάχιστον όνομα, κατάλυμα, check-in και check-out."
+        );
+        return;
+      }
+      if (checkOut <= checkIn) {
+        alert("Το check-out πρέπει να είναι μετά το check-in.");
+        return;
+      }
+      if (!guestsVal || guestsVal < 1) {
+        alert("Δώσε τον αριθμό ατόμων (τουλάχιστον 1).");
+        return;
+      }
+      const maxG = maxGuestsForAccommodation(accommodation);
+      if (guestsVal > maxG) {
+        alert(
+          `Το κατάλυμα "${accommodation}" επιτρέπει μέχρι ${maxG} άτομα.`
+        );
+        return;
+      }
+
+      if (hasOverlap(accommodation, checkIn, checkOut, null)) {
+        alert("Δεν επιτρέπεται διπλή κράτηση για το ίδιο κατάλυμα στις ίδιες ημερομηνίες.");
+        return;
+      }
+
+      const bookings = loadBookings();
+      const newBooking = {
+        id: Date.now().toString(36),
+        guestName,
+        accommodation,
+        phone,
+        email,
+        checkIn,
+        checkOut,
+        notes,
+        guests: guestsVal,
+        status: "",
+        createdAt: new Date().toISOString()
+      };
+      bookings.push(newBooking);
+      saveBookings(bookings);
+
+      closeNewBookingModal();
+      renderTimeline();
+      renderArrivalsPanel();
+      renderDashboard();
+    }
+
+
+    function normalizeAccommodationFromRoomtype(roomtype) {
+      if (!roomtype) return "";
+      let name = roomtype.toString().trim();
+      const prefix = "Seashell Luxury Residence";
+      if (name.startsWith(prefix)) {
+        name = name.slice(prefix.length).trim();
+      }
+      return name;
+    }
+
+    function syncBookingsFromExcelRowsBookingCom(rows) {
+      // Περιμένουμε στήλες τύπου:
+      // "Res ID Value", "Res ID Status", "Roomtype", "Adults",
+      // "Leader Name", "Leader Phone", "Check In", "Check Out"
+      let current = loadBookings();
+
+      const excelBookingsByExternalId = new Map();
+      current.forEach(b => {
+        if (b.source === "excel" && b.externalId) {
+          excelBookingsByExternalId.set(String(b.externalId), b);
+        }
+      });
+
+      const activeExternalIds = new Set();
+
+      rows.forEach(row => {
+        const rawId = row["Res ID Value"];
+        if (!rawId && rawId !== 0) return;
+        const externalId = String(rawId).trim();
+        if (!externalId) return;
+
+        const rawStatus = row["Res ID Status"] || "";
+        const status = rawStatus.toString().trim().toLowerCase();
+
+        // Κρατάμε μόνο Book
+        if (status && status !== "book") {
+          return;
+        }
+
+        activeExternalIds.add(externalId);
+
+        const roomtype = row["Roomtype"] || "";
+        const accName = normalizeAccommodationFromRoomtype(roomtype);
+
+        const leaderName = row["Leader Name"] || "";
+        const leaderPhone = row["Leader Phone"] || "";
+        const adultsVal = row["Adults"] || 0;
+
+        const checkInRaw = row["Check In"] || "";
+        const checkOutRaw = row["Check Out"] || "";
+
+        const checkIn = new Date(checkInRaw);
+        const checkOut = new Date(checkOutRaw);
+
+        if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+          return;
+        }
+
+        const checkInISO = checkIn.toISOString().slice(0, 10);
+        const checkOutISO = checkOut.toISOString().slice(0, 10);
+
+        if (!accName || !leaderName || !checkInISO || !checkOutISO) {
+          return;
+        }
+
+        const guests = parseInt(adultsVal || "1", 10) || 1;
+
+        // Αν το κατάλυμα δεν υπάρχει ήδη, το προσθέτουμε
+        if (accName && !ACCOMMODATIONS.includes(accName)) {
+          ACCOMMODATIONS.push(accName);
+          saveAccommodations();
+          populateAccommodationSelects();
+          renderLegend();
+        }
+
+        if (excelBookingsByExternalId.has(externalId)) {
+          // Ενημέρωση υπάρχουσας κράτησης
+          const b = excelBookingsByExternalId.get(externalId);
+          b.accommodation = accName;
+          b.guestName = leaderName;
+          b.phone = leaderPhone;
+          b.email = "";
+          b.checkIn = checkInISO;
+          b.checkOut = checkOutISO;
+          b.guests = guests;
+          if (!b.notes) {
+            b.notes = "Channel: Booking.com";
+          }
+        } else {
+          // Νέα κράτηση
+          const newBooking = {
+            id: "excel-" + externalId,
+            externalId: externalId,
+            source: "excel",
+            accommodation: accName,
+            guestName: leaderName,
+            phone: leaderPhone,
+            email: "",
+            checkIn: checkInISO,
+            checkOut: checkOutISO,
+            guests: guests,
+            notes: "Channel: Booking.com",
+            status: "",
+            createdAt: new Date().toISOString()
+          };
+          current.push(newBooking);
+          excelBookingsByExternalId.set(externalId, newBooking);
+        }
+      });
+
+      // Διαγραφή κρατήσεων που είχαν έρθει από Excel αλλά δεν υπάρχουν πια
+      current = current.filter(b => {
+        if (b.source === "excel" && b.externalId) {
+          return activeExternalIds.has(String(b.externalId));
+        }
+        return true;
+      });
+
+      saveBookings(current);
+      renderTimeline();
+      renderDashboard();
+      renderArrivalsPanel();
+
+      alert("Ο συγχρονισμός από το Excel ολοκληρώθηκε.");
+    }
+
+    function setupExcelImport() {
+      const importBtn = document.getElementById("importExcelBtn");
+      const fileInput = document.getElementById("excelFileInput");
+      if (!importBtn || !fileInput) return;
+
+      importBtn.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", (ev) => {
+        const file = ev.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+
+          const firstSheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[firstSheetName];
+
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+          syncBookingsFromExcelRowsBookingCom(rows);
+          fileInput.value = "";
+        };
+
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function setupSaveChangesBtn() {
+      const btn = document.getElementById("saveChangesBtn");
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        // Όλες οι αλλαγές αποθηκεύονται ήδη στο localStorage σε πραγματικό χρόνο,
+        // απλά δείχνουμε ένα μήνυμα για σιγουριά.
+        alert("Οι αλλαγές στις κρατήσεις έχουν ήδη αποθηκευτεί.");
+      });
+    }
+
+        /* ---------- DOMContentLoaded ---------- */
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const welcomeEl = document.getElementById("welcomeOverlay");
+      const welcomeBtn = document.getElementById("welcomeEnterBtn");
+      if (welcomeEl && welcomeBtn) {
+        welcomeBtn.addEventListener("click", () => {
+          welcomeEl.classList.remove("entering");
+          welcomeEl.classList.add("exiting");
+          welcomeEl.addEventListener(
+            "animationend",
+            () => {
+              welcomeEl.classList.add("hidden");
+            },
+            { once: true }
+          );
+        });
+      }
+
+
+      // Τίτλος
+      setupTitleEditing();
+
+      // Φόρτωση καταλυμάτων
+      loadAccommodations();
+      populateAccommodationSelects();
+      renderLegend();
+
+      // Start view date
+      viewStartDate = getTodayDate();
+
+      // Timeline & Dashboard
+      renderTimeline();
+      renderDashboard();
+
+      // Ειδοποιήσεις
+      initNotifications();
+
+      // Modals & context menu
+      setupEditModal();
+      setupContextMenu();
+      setupCleaningModal();
+      setupNewBookingModal();
+
+      // Default values φόρμας
+      const checkInInput = document.getElementById("checkIn");
+      const guestsInput = document.getElementById("guests");
+      if (checkInInput) checkInInput.value = getTodayISO();
+      if (guestsInput) guestsInput.value = 2;
+
+      // Submit φόρμας νέας κράτησης
+      const bookingForm = document.getElementById("bookingForm");
+      if (bookingForm) {
+        bookingForm.addEventListener("submit", handleFormSubmit);
+      }
+
+      // Συννεφάκι αφίξεων - κουμπί OK
+      const arrivalsBubbleOkBtn = document.getElementById("arrivalsBubbleOkBtn");
+      if (arrivalsBubbleOkBtn) {
+        arrivalsBubbleOkBtn.addEventListener("click", () => {
+          const bubble = document.getElementById("arrivalsBubble");
+          if (bubble) bubble.classList.add("hidden");
+        });
+      }
+
+      // Ανοίγει συννεφάκι με σημερινές/αυριανές αφίξεις κάθε φορά που ανοίγει το αρχείο
+      renderArrivalsPanel();
+
+      // Πλοήγηση ημερών
+      document.getElementById("todayBtn").addEventListener("click", () => {
+        viewStartDate = getTodayDate();
+        renderTimeline();
+      });
+      document.getElementById("prevDayBtn").addEventListener("click", () => {
+        viewStartDate = addDays(viewStartDate, -1);
+        renderTimeline();
+      });
+      document.getElementById("nextDayBtn").addEventListener("click", () => {
+        viewStartDate = addDays(viewStartDate, 1);
+        renderTimeline();
+      });
+
+      // Μετάβαση σε συγκεκριμένη ημερομηνία
+      const gotoInput = document.getElementById("gotoDateInput");
+      const gotoBtn = document.getElementById("gotoDateBtn");
+      if (gotoInput && gotoBtn) {
+        gotoBtn.addEventListener("click", () => {
+          if (!gotoInput.value) return;
+          const d = new Date(gotoInput.value);
+          viewStartDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+          renderTimeline();
+        });
+      }
+
+      // Accommodation controls
+      document
+        .getElementById("addAccommodationBtnBottom")
+        .addEventListener("click", addAccommodation);
+      document
+        .getElementById("removeAccommodationBtn")
+        .addEventListener("click", removeAccommodation);
+
+      // Export
+      document
+        .getElementById("exportExcelBtn")
+        .addEventListener("click", exportToExcelLikeCSV);
+
+      // Import από Excel
+      setupExcelImport();
+
+      // Κουμπί "Αποθήκευση" δίπλα στο "Νέα Κράτηση"
+      setupSaveChangesBtn();
+    });
+  </script>
+
+<script>
+  // === Simple front-end authentication (session-only) ===
+  (function(){
+    const VALID_USER = "James Rigas";
+    const VALID_PASS = "JRmsbc05!";
+    const overlay = document.getElementById("welcomeOverlay");
+    const loginCard = document.getElementById("loginCard");
+    const welcomeBlock = document.getElementById("welcomeBlock");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const enterBtn = document.getElementById("welcomeEnterBtn");
+
+    function isAuthed() {
+      try { return sessionStorage.getItem("auth_ok") === "1"; } catch(e){ return false; }
+    }
+    function setAuthed(v) {
+      try { sessionStorage.setItem("auth_ok", v ? "1" : "0"); } catch(e){}
+    }
+    function revealWelcome() {
+      if (loginCard) loginCard.classList.add("hidden");
+      if (welcomeBlock) welcomeBlock.classList.remove("hidden");
+    }
+    function showLogin() {
+      if (welcomeBlock) welcomeBlock.classList.add("hidden");
+      if (loginCard) loginCard.classList.remove("hidden");
+    }
+
+    // Initial state (keep welcome hidden until authenticated)
+    if (isAuthed()) {
+      revealWelcome();
+    } else {
+      showLogin();
+    }
+
+    if (loginForm) {
+      loginForm.addEventListener("submit", function(ev){
+        ev.preventDefault();
+        const u = (document.getElementById("username")?.value || "").trim();
+        const p = (document.getElementById("password")?.value || "");
+        if (u === VALID_USER && p === VALID_PASS) {
+          setAuthed(true);
+          if (loginError) loginError.classList.add("hidden");
+          revealWelcome();
+          // small success flash on button
+          const btn = loginForm.querySelector("button[type='submit']");
+          if (btn) { btn.textContent = "Επιτυχής σύνδεση ✓"; setTimeout(()=>btn.textContent="Σύνδεση", 1200); }
+        } else {
+          if (loginError) {
+            loginError.textContent = "Λάθος στοιχεία. Προσπάθησε ξανά.";
+            loginError.classList.remove("hidden");
+          }
+          if (loginCard) {
+            loginCard.classList.remove("shake");
+            // trigger reflow to restart animation
+            void loginCard.offsetWidth;
+            loginCard.classList.add("shake");
+          }
+          setAuthed(false);
+        }
+      });
+    }
+
+    // Exit overlay on ENTER CALENDAR
+    if (enterBtn && overlay) {
+      enterBtn.addEventListener("click", function(){
+        overlay.classList.add("exiting");
+        setTimeout(()=> overlay.classList.add("hidden"), 850);
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
