@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0ea5e9">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta charset="UTF-8" />
   <title>Seashell Residence - Calendar</title>
   <style>
@@ -1029,7 +1029,7 @@
         <h4 class="login-title">Σύνδεση</h4>
         <form id="loginForm" autocomplete="off">
           <div class="login-row">
-            <input type="text" id="username" class="neon-input" placeholder="Email" required>
+            <input type="text" id="username" class="neon-input" placeholder="Όνομα χρήστη" required>
           </div>
           <div class="login-row">
             <input type="password" id="password" class="neon-input" placeholder="Κωδικός πρόσβασης" required>
@@ -3114,131 +3114,76 @@ function renderCleaningTimeline() {
     });
   </script>
 
-
-
-
 <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
-    });
-  }
-</script>
+  // === Simple front-end authentication (session-only) ===
+  (function(){
+    const VALID_USER = "James Rigas";
+    const VALID_PASS = "JRmsbc05!";
+    const overlay = document.getElementById("welcomeOverlay");
+    const loginCard = document.getElementById("loginCard");
+    const welcomeBlock = document.getElementById("welcomeBlock");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const enterBtn = document.getElementById("welcomeEnterBtn");
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBf-pnX1FzrwVbQfVE4PyQHn-nUaCVdY",
-    authDomain: "kraton-765fe.firebaseapp.com",
-    projectId: "kraton-765fe",
-    storageBucket: "kraton-765fe.appspot.com",
-    messagingSenderId: "462291361996",
-    appId: "1:462291361996:web:9b3c1817f420db4ad4a269",
-    measurementId: "G-QLQG8B6WTK"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const overlay = document.getElementById("welcomeOverlay");
-  const loginCard = document.getElementById("loginCard");
-  const welcomeBlock = document.getElementById("welcomeBlock");
-  const loginForm = document.getElementById("loginForm");
-  const loginError = document.getElementById("loginError");
-  const enterBtn = document.getElementById("welcomeEnterBtn");
-
-  function revealWelcome() { if (loginCard) loginCard.classList.add("hidden"); if (welcomeBlock) welcomeBlock.classList.remove("hidden"); }
-  function showLogin() { if (welcomeBlock) welcomeBlock.classList.add("hidden"); if (loginCard) loginCard.classList.remove("hidden"); }
-
-  const DOC_REF = doc(db, "seashell", "calendar");
-
-  const origSaveBookings = window.saveBookings;
-  window.saveBookings = function(bookings) { origSaveBookings(bookings); cloudSave().catch(console.error); };
-
-  const origSaveAccommodations = window.saveAccommodations;
-  if (origSaveAccommodations) {
-    window.saveAccommodations = function() {
-      origSaveAccommodations.apply(this, arguments);
-      cloudSave().catch(console.error);
-    };
-  }
-
-  const TITLE_KEY = "calendar_main_title_v1";
-  const _setItem = window.localStorage.setItem.bind(window.localStorage);
-  window.localStorage.setItem = function(k, v) {
-    _setItem(k, v);
-    if (k === "accommodation_bookings_v1" || k === "accommodation_names_v1" || k === TITLE_KEY) {
-      cloudSave().catch(()=>{});
+    function isAuthed() {
+      try { return sessionStorage.getItem("auth_ok") === "1"; } catch(e){ return false; }
     }
-  };
-
-  async function cloudSave() {
-    try {
-      const bookings = JSON.parse(localStorage.getItem("accommodation_bookings_v1") || "[]");
-      const accoms   = JSON.parse(localStorage.getItem("accommodation_names_v1") || "[]");
-      const title    = localStorage.getItem(TITLE_KEY) || "Seashell Residence";
-      await setDoc(DOC_REF, { bookings, accommodations: accoms, title, updatedAt: Date.now() }, { merge: true });
-    } catch(e) { console.error("Cloud save error:", e); }
-  }
-
-  async function pullFromCloud() {
-    const snap = await getDoc(DOC_REF);
-    if (snap.exists()) {
-      const data = snap.data();
-      if (data.bookings) localStorage.setItem("accommodation_bookings_v1", JSON.stringify(data.bookings));
-      if (data.accommodations) localStorage.setItem("accommodation_names_v1", JSON.stringify(data.accommodations));
-      if (data.title) localStorage.setItem(TITLE_KEY, data.title);
-      if (window.renderLegend) window.renderLegend();
-      if (window.renderTimeline) window.renderTimeline();
-      if (window.renderArrivalsPanel) window.renderArrivalsPanel();
-      if (window.renderDashboard) window.renderDashboard();
+    function setAuthed(v) {
+      try { sessionStorage.setItem("auth_ok", v ? "1" : "0"); } catch(e){}
     }
-  }
+    function revealWelcome() {
+      if (loginCard) loginCard.classList.add("hidden");
+      if (welcomeBlock) welcomeBlock.classList.remove("hidden");
+    }
+    function showLogin() {
+      if (welcomeBlock) welcomeBlock.classList.add("hidden");
+      if (loginCard) loginCard.classList.remove("hidden");
+    }
 
-  function startRealtimeSync() {
-    onSnapshot(DOC_REF, (snap) => {
-      if (!snap.exists()) return;
-      const data = snap.data();
-      if (data.bookings) localStorage.setItem("accommodation_bookings_v1", JSON.stringify(data.bookings));
-      if (data.accommodations) localStorage.setItem("accommodation_names_v1", JSON.stringify(data.accommodations));
-      if (data.title) localStorage.setItem(TITLE_KEY, data.title);
-      if (window.renderLegend) window.renderLegend();
-      if (window.renderTimeline) window.renderTimeline();
-      if (window.renderArrivalsPanel) window.renderArrivalsPanel();
-      if (window.renderDashboard) window.renderDashboard();
-    });
-  }
+    // Initial state (keep welcome hidden until authenticated)
+    if (isAuthed()) {
+      revealWelcome();
+    } else {
+      showLogin();
+    }
 
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (ev) => {
-      ev.preventDefault();
-      const email = (document.getElementById("username")?.value || "").trim();
-      const pass  = (document.getElementById("password")?.value || "");
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        if (loginError) loginError.classList.add("hidden");
-        revealWelcome();
-        await pullFromCloud();
-        startRealtimeSync();
-      } catch (e) {
-        if (loginError) { loginError.textContent = "Αποτυχία σύνδεσης. Έλεγξε email/κωδικό."; loginError.classList.remove("hidden"); }
-        if (loginCard) { loginCard.classList.remove("shake"); void loginCard.offsetWidth; loginCard.classList.add("shake"); }
-      }
-    });
-  }
+    if (loginForm) {
+      loginForm.addEventListener("submit", function(ev){
+        ev.preventDefault();
+        const u = (document.getElementById("username")?.value || "").trim();
+        const p = (document.getElementById("password")?.value || "");
+        if (u === VALID_USER && p === VALID_PASS) {
+          setAuthed(true);
+          if (loginError) loginError.classList.add("hidden");
+          revealWelcome();
+          // small success flash on button
+          const btn = loginForm.querySelector("button[type='submit']");
+          if (btn) { btn.textContent = "Επιτυχής σύνδεση ✓"; setTimeout(()=>btn.textContent="Σύνδεση", 1200); }
+        } else {
+          if (loginError) {
+            loginError.textContent = "Λάθος στοιχεία. Προσπάθησε ξανά.";
+            loginError.classList.remove("hidden");
+          }
+          if (loginCard) {
+            loginCard.classList.remove("shake");
+            // trigger reflow to restart animation
+            void loginCard.offsetWidth;
+            loginCard.classList.add("shake");
+          }
+          setAuthed(false);
+        }
+      });
+    }
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) { revealWelcome(); pullFromCloud(); startRealtimeSync(); }
-    else { showLogin(); }
-  });
-
-  if (enterBtn && overlay) {
-    enterBtn.addEventListener("click", function(){ overlay.classList.add("exiting"); setTimeout(()=> overlay.classList.add("hidden"), 850); });
-  }
+    // Exit overlay on ENTER CALENDAR
+    if (enterBtn && overlay) {
+      enterBtn.addEventListener("click", function(){
+        overlay.classList.add("exiting");
+        setTimeout(()=> overlay.classList.add("hidden"), 850);
+      });
+    }
+  })();
 </script>
 
 </body>
