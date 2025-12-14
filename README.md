@@ -1,15 +1,21 @@
-# Seashell Residence Calendar
 
-Static single-file app prepared for GitHub Pages.
+# Firebase Sync Setup
 
-## Deploy on GitHub Pages
-1. Create a new public repository (e.g. `seashell-calendar`).
-2. Upload `index.html`, `favicon.png`, and this `README.md` to the repository root.
-3. Go to **Settings → Pages**.
-4. Under **Build and deployment**, set:
-   - **Source**: *Deploy from a branch*
-   - **Branch**: *main* / *(root)*
-5. Save. Your site will be live shortly at:
-   `https://<your-username>.github.io/seashell-calendar/`
-
-> Note: This build removes the front-end login gate so the page opens directly.
+1) Go to https://console.firebase.google.com → Add project.
+2) Enable **Firestore** (Production mode).
+3) Enable **Authentication → Anonymous**.
+4) Copy your **firebaseConfig** from Project settings → Web app.
+5) In `index.html`, replace the placeholders in `firebaseConfig`.
+6) (Optional) Firestore Rules (basic):
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /app/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+```
+7) Upload `index.html` to your GitHub Pages repo (root). Open your site URL.

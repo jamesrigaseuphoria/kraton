@@ -2,7 +2,7 @@
 <html lang="el">
 <head>
   <meta charset="UTF-8" />
-  <title>Seashell Residence Calendar</title>
+  <title>Seashell Residence - Calendar</title>
   <style>
     * {
       box-sizing: border-box;
@@ -1014,8 +1014,6 @@
 
 </style>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
   <!-- Welcome Screen Overlay -->
@@ -3187,22 +3185,102 @@ function renderCleaningTimeline() {
 </script>
 
 
-<!-- Login bypass helper: removes any simple front-end gate so the page opens directly on GitHub Pages -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    ['login','loginModal','login-screen','auth','authGate'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.remove();
-    });
-    document.body.style.opacity = 1;
-    document.body.style.visibility = 'visible';
-    window.isAuthenticated = true;
-    ['onLoginSuccess','loginSuccess','initApp','startApp'].forEach(fn => {
-      if (typeof window[fn] === 'function') { try { window[fn](); } catch(e){} }
-    });
-  } catch(e) {}
-});
+<!-- === Firebase Realtime Sync (Firestore) === -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+  // 1) ΒΑΛΕ ΤΟ ΔΙΚΟ ΣΟΥ CONFIG ΑΠΟ Firebase console → Project settings → Web app
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // 2) Init
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // 3) Sign-in (anonymous)
+  await signInAnonymously(auth);
+
+  // Firestore doc for shared state
+  const stateRef = doc(db, "app", "state");
+
+  const STORAGE_KEY = "accommodation_bookings_v1";
+  const ACCOM_NAMES_KEY = "accommodation_names_v1";
+
+  async function pushStateToCloud() {
+    try {
+      const bookingsRaw = localStorage.getItem(STORAGE_KEY);
+      const accomRaw = localStorage.getItem(ACCOM_NAMES_KEY);
+      const bookings = bookingsRaw ? JSON.parse(bookingsRaw) : [];
+      const accommodations = accomRaw ? JSON.parse(accomRaw) : [];
+      await setDoc(stateRef, {
+        bookings,
+        accommodations,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch (e) {
+      console.warn("Cloud sync failed:", e);
+    }
+  }
+
+  onSnapshot(stateRef, (snap) => {
+    const data = snap.data();
+    if (!data) return;
+    try {
+      const currB = localStorage.getItem(STORAGE_KEY);
+      const currA = localStorage.getItem(ACCOM_NAMES_KEY);
+      const newB = JSON.stringify(data.bookings || []);
+      const newA = JSON.stringify(data.accommodations || []);
+      let changed = false;
+      if (currB !== newB) { localStorage.setItem(STORAGE_KEY, newB); changed = true; }
+      if (currA !== newA) { localStorage.setItem(ACCOM_NAMES_KEY, newA); changed = true; }
+      if (changed) {
+        try { renderLegend && renderLegend(); } catch(e){}
+        try { renderTimeline && renderTimeline(); } catch(e){}
+        try { renderDashboard && renderDashboard(); } catch(e){}
+        try { renderArrivalsPanel && renderArrivalsPanel(); } catch(e){}
+      }
+    } catch (e) {
+      console.warn("Failed to apply cloud state:", e);
+    }
+  });
+
+  (function(){
+    const origSaveBookings = window.saveBookings;
+    window.saveBookings = function(bookings) {
+      try { origSaveBookings && origSaveBookings(bookings); } catch(e){}
+      pushStateToCloud();
+    };
+    const origSaveAccommodations = window.saveAccommodations;
+    window.saveAccommodations = function() {
+      try { origSaveAccommodations && origSaveAccommodations(); } catch(e){}
+      pushStateToCloud();
+    };
+    (async () => {
+      const s = await getDoc(stateRef);
+      if (!s.exists()) {
+        await pushStateToCloud();
+      } else {
+        const data = s.data();
+        if (data) {
+          if (data.bookings) localStorage.setItem(STORAGE_KEY, JSON.stringify(data.bookings));
+          if (data.accommodations) localStorage.setItem(ACCOM_NAMES_KEY, JSON.stringify(data.accommodations));
+          try { renderLegend && renderLegend(); } catch(e){}
+          try { renderTimeline && renderTimeline(); } catch(e){}
+          try { renderDashboard && renderDashboard(); } catch(e){}
+          try { renderArrivalsPanel && renderArrivalsPanel(); } catch(e){}
+        }
+      }
+    })();
+  })();
 </script>
 
 </body>
