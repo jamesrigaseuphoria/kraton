@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Firebase Diagnostics</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
+         background:#0b1220;color:#e7eefc;margin:0;padding:40px}
+    .card{max-width:840px;margin:0 auto;background:#0f172a;border:1px solid #21304d;
+          border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:24px}
+    h1{margin:0 0 8px 0;font-size:24px}
+    code,pre{background:#0a1222;color:#c6f6ff;border:1px solid #21304d;border-radius:8px;padding:12px;display:block;overflow:auto}
+    input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a3c63;background:#0a1222;color:#e7eefc}
+    button{padding:10px 14px;border-radius:10px;border:0;background:#22d3ee;color:#06121e;font-weight:700;cursor:pointer}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ok{color:#6ee7b7}.bad{color:#fca5a5}
+    small{opacity:.8}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Firebase Diagnostics</h1>
+    <p>Έλεγχος ότι το project, το Auth και το Firestore λειτουργούν σωστά.</p>
+
+    <h3>1) Config που χρησιμοποιείται</h3>
+    <pre id="cfg"></pre>
+
+    <h3>2) Δοκιμή Login</h3>
+    <div class="row">
+      <div><input id="email" type="email" placeholder="email (όπως στο Authentication → Users)"></div>
+      <div><input id="pass" type="password" placeholder="password"></div>
+    </div>
+    <p><button id="btnLogin">Σύνδεση</button></p>
+    <p id="authStatus"><small>αναμονή…</small></p>
+
+    <h3>3) Firestore read</h3>
+    <p><button id="btnRead">Διάβασε seashell/calendar</button></p>
+    <pre id="fs"></pre>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBf-pnX1FzrwVbQfVE4PyQHn-nUaCVdY",
+    authDomain: "kraton-765fe.firebaseapp.com",
+    projectId: "kraton-765fe",
+    storageBucket: "kraton-765fe.appspot.com",
+    messagingSenderId: "462291361996",
+    appId: "1:462291361996:web:9b3c1817f420db4ad4a269",
+    measurementId: "G-QLQG8B6WTK"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  document.getElementById('cfg').textContent = JSON.stringify(app.options, null, 2);
+
+  const authStatus = document.getElementById('authStatus');
+  onAuthStateChanged(auth, (u)=>{
+    authStatus.innerHTML = u ? `<b class="ok">AUTH OK</b> — ${u.email}` : `<span class="bad">AUTH: not signed in</span>`;
+  });
+
+  document.getElementById('btnLogin').onclick = async ()=>{
+    const email = document.getElementById('email').value.trim();
+    const pass  = document.getElementById('pass').value;
+    try{
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      authStatus.innerHTML = `<b class="ok">AUTH OK</b> — ${cred.user.email}`;
+    }catch(e){
+      authStatus.innerHTML = `<span class="bad">AUTH ERROR:</span> <code>${e.code} — ${e.message}</code>`;
+      console.error(e);
+    }
+  };
+
+  document.getElementById('btnRead').onclick = async ()=>{
+    try{
+      const snap = await getDoc(doc(db, "seashell", "calendar"));
+      document.getElementById('fs').textContent =
+        snap.exists() ? JSON.stringify(snap.data(), null, 2) : "Το document δεν υπάρχει ακόμη (θα δημιουργηθεί όταν αποθηκεύσεις από την εφαρμογή).";
+    }catch(e){
+      document.getElementById('fs').textContent = `FIRESTORE ERROR: ${e.code||''} ${e.message||e}`;
+      console.error(e);
+    }
+  };
+</script>
+</body>
+</html>
